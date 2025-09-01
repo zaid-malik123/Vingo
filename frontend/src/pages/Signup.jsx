@@ -3,6 +3,8 @@ import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 import { FcGoogle } from "react-icons/fc";
 import {useNavigate} from "react-router-dom"
+import axios from "axios"
+import { serverUrl } from "../App";
 const Signup = () => {
   const primaryColor = "#ff4d2d";
   const hoverColor = "#e64323";
@@ -11,6 +13,19 @@ const Signup = () => {
   const navigate = useNavigate()
   const [showPass, setShowPass] = useState(false);
   const [role, setRole] = useState("user");
+  const [fullName, setFullName] = useState("")
+  const [email, setEmail] = useState("")
+  const [mobileNo, setMobileNo] = useState("")
+  const [password, setPassword] = useState("")
+
+  const handleSignup = async ()=>{
+  try {
+    const res = await axios.post(`${serverUrl}/api/auth/signup`,{fullName, email, password, mobileNo, role},{withCredentials:true})
+    console.log(res.data)
+  } catch (error) {
+    console.log(error)
+  } 
+  }
 
   return (
     <div
@@ -40,6 +55,8 @@ const Signup = () => {
             Full Name
           </label>
           <input
+            onChange={(e)=> setFullName(e.target.value)} 
+            value={fullName}
             className="w-full border rounded-lg px-3 py-2 focus:outline-none "
             style={{ border: `1px solid ${borderColor}` }}
             type="text"
@@ -55,6 +72,8 @@ const Signup = () => {
             Email
           </label>
           <input
+            onChange={(e)=> setEmail(e.target.value)} 
+            value={email}
             className="w-full border rounded-lg px-3 py-2 focus:outline-none "
             style={{ border: `1px solid ${borderColor}` }}
             type="email"
@@ -70,6 +89,8 @@ const Signup = () => {
             Mobile No
           </label>
           <input
+            onChange={(e)=> setMobileNo(e.target.value)} 
+            value={mobileNo}
             className="w-full border rounded-lg px-3 py-2 focus:outline-none "
             style={{ border: `1px solid ${borderColor}` }}
             type="text"
@@ -86,6 +107,8 @@ const Signup = () => {
           </label>
           <div className="relative  ">
             <input
+              onChange={(e)=> setPassword(e.target.value)} 
+              value={password}
               className="w-full border rounded-lg px-3 py-2 focus:outline-none "
               style={{ border: `1px solid ${borderColor}` }}
               type={`${showPass ? "text" : "password"}`}
@@ -116,7 +139,7 @@ const Signup = () => {
             ))}
           </div>
         </div>
-        <button className="w-full font-semibold py-2 rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer">Sign Up</button>
+        <button onClick={handleSignup} className="w-full font-semibold py-2 rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer">Sign Up</button>
         <button className="w-full mt-4 flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 border-gray-400 hover:bg-gray-100" >
         <FcGoogle size={20} />
         <span>Sign up with google</span>

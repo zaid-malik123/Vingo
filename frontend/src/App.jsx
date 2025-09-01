@@ -1,6 +1,8 @@
 import {Routes, Route} from "react-router-dom"
 import Login from "./pages/Login"
 import Signup from "./pages/Signup"
+
+export const serverUrl = "http://localhost:3000"
 const App = () => {
   return (
     <div>
