@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 import { genToken } from "../utils/Token.js";
 import { sendOtpMail } from "../service/otp.service.js";
 
-
 export const signup = async (req, res, next) => {
   try {
     const { fullName, email, password, mobileNo, role } = req.body;
@@ -82,28 +81,48 @@ export const logout = async (req, res, next) => {
   }
 };
 
-export const sendOtp = async (req, res, next)=>{
-try {
-  const {email} = req.body;
+export const sendOtp = async (req, res, next) => {
+  try {
+    const { email } = req.body;
 
-  const user = await User.findOne({email})
+    const user = await User.findOne({ email });
 
-  if(!user){
-    res.status(400).json({message:"user does not exist"})
+    if (!user) {
+      res.status(400).json({ message: "user does not exist" });
+    }
+
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+
+    user.resetOtp = otp;
+    user.otpExpires = Date.now() + 5 * 60 * 1000;
+    user.isOtpVerified = false;
+    await user.save();
+
+    await sendOtpMail(email, otp);
+
+    res.status(200).json({ message: "OTP send successfully 👍" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-  
-  const otp = Math.floor(1000 + Math.random() * 9000).toString()
+};
 
-  user.resetOtp = otp;
-  user.otpExpires = Date.now() + 5*60*1000;
-  user.isOtpVerified = false
-  await user.save();
+export const verifyOtp = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
 
-  await sendOtpMail(email, otp)
+    const user = await User.findOne({ email });
 
-  res.status(200).json({message: "OTP send successfully 👍"})
+    if (!user || user.resetOtp != otp || user.otpExpires < Date.now()) {
+      res.status(400).json({ message: "Invalid/expired Otp" });
+    }
+    
+    user.isOtpVerified = true
+    user.resetOtp = undefined
+    user.otpExpires = undefined
 
-} catch (error) {
-  res.status(500).json({ message: error.message });
-}
-}
+    res.status(200).json({ message: "OTP verify successfully 👍" });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

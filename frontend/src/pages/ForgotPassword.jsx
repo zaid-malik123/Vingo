@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 const ForgotPassword = () => {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(2);
   const navigate = useNavigate();
   const [showPass, setShowPass] = useState(false);
   const [email, setEmail] = useState("");
