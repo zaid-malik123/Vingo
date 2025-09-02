@@ -115,13 +115,43 @@ export const verifyOtp = async (req, res, next) => {
     if (!user || user.resetOtp != otp || user.otpExpires < Date.now()) {
       res.status(400).json({ message: "Invalid/expired Otp" });
     }
-    
-    user.isOtpVerified = true
-    user.resetOtp = undefined
-    user.otpExpires = undefined
+
+    user.isOtpVerified = true;
+    user.resetOtp = undefined;
+    user.otpExpires = undefined;
 
     res.status(200).json({ message: "OTP verify successfully 👍" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { newPassword, confirmPassword, email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user || !user.isOtpVerified) {
+      res.status(400).json({ message: "Otp verification required" });
+    }
+
+    if (newPassword != confirmPassword) {
+      return res
+        .status(400)
+        .json({ message: "new password and confirm password does not same" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashedPassword;
+    user.isOtpVerified = false;
+    user.resetOtp = undefined;
+    user.otpExpires = undefined;
+
+    await user.save();
+
+    res.status(200).json({ message: "password reset successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
