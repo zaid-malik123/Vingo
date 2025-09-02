@@ -4,7 +4,8 @@ import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { serverUrl } from "../App";
-
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
+import {auth} from "../../firebase"
 const Login = () => {
   const primaryColor = "#ff4d2d";
   const hoverColor = "#e64323";
@@ -64,6 +65,21 @@ const Login = () => {
     }
   };
 
+   const handleGoogleAuth = async ()=>{
+       const provider = new GoogleAuthProvider()
+       const result = await signInWithPopup(auth, provider)
+       try {
+        const {data} = await axios.post(`${serverUrl}/api/auth/google-auth`,{
+          email: result.user.email,
+        },{withCredentials:true})
+       
+        console.log(data)
+  
+       } catch (error) {
+        console.log(error)
+       }
+     } 
+     
   return (
     <div
       className="min-h-screen w-full flex items-center justify-center p-4"
@@ -148,6 +164,7 @@ const Login = () => {
 
         {/* Google Login */}
         <button
+          onClick={handleGoogleAuth}
           className="w-full mt-4 flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 border-gray-400 hover:bg-gray-100"
         >
           <FcGoogle size={20} />
