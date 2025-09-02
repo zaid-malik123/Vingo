@@ -1,7 +1,8 @@
 import nodemailer from "nodemailer"
-
+import {config} from "dotenv"
+config()
 const transporter = nodemailer.createTransport({
-  host: "Gmail",
+  service: "gmail",
   port: 465,
   secure: true, 
   auth: {

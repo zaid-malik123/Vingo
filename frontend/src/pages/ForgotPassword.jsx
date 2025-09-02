@@ -3,14 +3,46 @@ import { IoMdArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
+import axios from "axios"
+import { serverUrl } from "../App";
+
+
 const ForgotPassword = () => {
-  const [step, setStep] = useState(2);
+  const [step, setStep] = useState(1);
   const navigate = useNavigate();
   const [showPass, setShowPass] = useState(false);
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+
+  const handleSendOtp = async ()=>{
+    try {
+      const res = await axios.post(`${serverUrl}/api/auth/send-otp`,{email},{withCredentials:true})
+      setStep(2)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  
+   const handleVerifyOtp = async ()=>{
+    try {
+      const res = await axios.post(`${serverUrl}/api/auth/verify-otp`,{email, otp},{withCredentials:true})
+      setStep(3)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+    const handleResetPassword = async ()=>{
+    try {
+      const res = await axios.post(`${serverUrl}/api/auth/reset-password`,{email, newPassword, confirmPassword},{withCredentials:true})
+      navigate("/login")
+    } catch (error) {
+      console.log(error)
+    }
+  }
+    
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[#fff9f6] p-4">
       <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-8">
@@ -41,7 +73,7 @@ const ForgotPassword = () => {
                 placeholder="Enter your Email"
               />
             </div>
-            <button className="w-full font-semibold py-2 rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer">
+            <button onClick={handleSendOtp} className="w-full font-semibold py-2 rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer">
               Send OTP
             </button>
           </div>
@@ -64,7 +96,7 @@ const ForgotPassword = () => {
                 placeholder="Enter OTP"
               />
             </div>
-            <button className="w-full font-semibold py-2 rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer">
+            <button onClick={handleVerifyOtp} className="w-full font-semibold py-2 rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer">
               Verify OTP
             </button>
           </div>
@@ -119,7 +151,7 @@ const ForgotPassword = () => {
                 </button>
               </div>
             </div>
-              <button className="w-full font-semibold py-2 rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer">
+              <button onClick={handleResetPassword} className="w-full font-semibold py-2 rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer">
               Reset Password
             </button>
           </div>
