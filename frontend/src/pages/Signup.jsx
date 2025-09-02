@@ -83,8 +83,7 @@ const Signup = () => {
         { fullName, email, password, mobileNo, role },
         { withCredentials: true }
       );
-      console.log(res.data);
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       // backend error handling
       const msg = error.response?.data?.message || "Signup failed";
