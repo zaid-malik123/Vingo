@@ -7,6 +7,8 @@ import { serverUrl } from "../App";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../firebase";
 import { ClipLoader } from "react-spinners";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../redux/userSlice";
 
 const Signup = () => {
   const primaryColor = "#ff4d2d";
@@ -14,7 +16,7 @@ const Signup = () => {
   const bgColor = "#fff9f6";
   const borderColor = "#ddd";
   const navigate = useNavigate();
-
+  const dispatch = useDispatch()
   const [showPass, setShowPass] = useState(false);
   const [role, setRole] = useState("user");
   const [fullName, setFullName] = useState("");
@@ -90,6 +92,7 @@ const Signup = () => {
         { fullName, email, password, mobileNo, role },
         { withCredentials: true }
       );
+      dispatch(setUserData(res.data))
       setLoading(false);
       navigate("/");
     } catch (error) {

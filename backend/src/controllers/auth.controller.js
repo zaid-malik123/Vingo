@@ -39,7 +39,7 @@ export const signup = async (req, res, next) => {
       maxAge: 3 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     });
-    res.status(201).json({ message: "user created Successfully", createdUser });
+    res.status(201).json({  createdUser });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -66,7 +66,7 @@ export const login = async (req, res, next) => {
       maxAge: 3 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     });
-    res.status(200).json({ message: "login Successfully", user });
+    res.status(200).json({ user });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -173,7 +173,7 @@ try {
       maxAge: 3 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     });
-  res.status(200).json({message: user})
+  res.status(200).json({user})
 
 } catch (error) {
   res.status(500).json({ message: error.message });

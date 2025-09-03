@@ -3,10 +3,14 @@ import Login from "./pages/Login"
 import Signup from "./pages/Signup"
 import ForgotPassword from "./pages/ForgotPassword"
 import useGetCurrentUser from "./hooks/useGetCurrentUser"
+import { useSelector } from "react-redux"
+
 
 export const serverUrl = "http://localhost:3000"
 const App = () => {
   useGetCurrentUser()
+  const user = useSelector((state)=> state)
+  console.log(user)
   return (
     <div>
       <Routes>
