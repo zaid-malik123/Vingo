@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import axios from "axios";
 import { serverUrl } from "../App";
+import { ClipLoader } from "react-spinners";
 
 const ForgotPassword = () => {
   const [step, setStep] = useState(1);
@@ -14,6 +15,7 @@ const ForgotPassword = () => {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // field specific error states
   const [emailError, setEmailError] = useState("");
@@ -24,8 +26,17 @@ const ForgotPassword = () => {
   const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
 
   const handleSendOtp = async () => {
-    if (!email) return setEmailError("Email is required");
-    if (!validateEmail(email)) return setEmailError("Please enter a valid email");
+    setLoading(true);
+    if (!email) {
+      setEmailError("Email is required");
+      setLoading(false);
+      return;
+    }
+    if (!validateEmail(email)) {
+      setEmailError("Please enter a valid email");
+      setLoading(false);
+      return;
+    }
 
     try {
       await axios.post(
@@ -33,30 +44,40 @@ const ForgotPassword = () => {
         { email },
         { withCredentials: true }
       );
+      setLoading(false);
       setEmailError("");
       setStep(2);
     } catch (error) {
+      setLoading(false);
       setEmailError(error.response?.data?.message || "Failed to send OTP");
     }
   };
 
   const handleVerifyOtp = async () => {
-    if (!otp) return setOtpError("OTP is required");
+    setLoading(true);
+    if (!otp) {
+      setOtpError("OTP is required");
+      setLoading(false);
+      return;
+    }
 
     try {
-      await axios.post(
+     const res = await axios.post(
         `${serverUrl}/api/auth/verify-otp`,
         { email, otp },
         { withCredentials: true }
       );
+      setLoading(false);
       setOtpError("");
       setStep(3);
     } catch (error) {
+      setLoading(false);
       setOtpError(error.response?.data?.message || "Invalid OTP");
     }
   };
 
   const handleResetPassword = async () => {
+    setLoading(true);
     let hasError = false;
 
     if (!newPassword) {
@@ -79,7 +100,9 @@ const ForgotPassword = () => {
       setConfirmPasswordError("");
     }
 
-    if (hasError) return;
+    if (hasError) {
+      setLoading(false);
+    }
 
     try {
       await axios.post(
@@ -87,9 +110,13 @@ const ForgotPassword = () => {
         { email, newPassword, confirmPassword },
         { withCredentials: true }
       );
+      setLoading(false);
       navigate("/login");
     } catch (error) {
-      setPasswordError(error.response?.data?.message || "Password reset failed");
+      setLoading(false);
+      setPasswordError(
+        error.response?.data?.message || "Password reset failed"
+      );
     }
   };
 
@@ -127,10 +154,11 @@ const ForgotPassword = () => {
               )}
             </div>
             <button
+              disabled={loading}
               onClick={handleSendOtp}
               className="w-full font-semibold py-2 rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer"
             >
-              Send OTP
+              {loading ? <ClipLoader size={20} /> : "Send OTP"}
             </button>
           </div>
         )}
@@ -155,10 +183,11 @@ const ForgotPassword = () => {
               )}
             </div>
             <button
+              disabled={loading}
               onClick={handleVerifyOtp}
               className="w-full font-semibold py-2 rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer"
             >
-              Verify OTP
+              {loading ? <ClipLoader size={20} /> : "Verify OTP"}
             </button>
           </div>
         )}
@@ -215,15 +244,18 @@ const ForgotPassword = () => {
                 </button>
               </div>
               {confirmPasswordError && (
-                <p className="text-red-500 text-sm mt-1">{confirmPasswordError}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {confirmPasswordError}
+                </p>
               )}
             </div>
 
             <button
+              disabled={loading}
               onClick={handleResetPassword}
               className="w-full font-semibold py-2 rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer"
             >
-              Reset Password
+              {loading ? <ClipLoader size={20} /> : "Reset Password"}
             </button>
           </div>
         )}

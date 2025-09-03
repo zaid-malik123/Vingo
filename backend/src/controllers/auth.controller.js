@@ -113,7 +113,7 @@ export const verifyOtp = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user || user.resetOtp != otp || user.otpExpires < Date.now()) {
-      res.status(400).json({ message: "Invalid/expired Otp" });
+       return res.status(400).json({ message: "Invalid/expired Otp" });
     }
 
     user.isOtpVerified = true;

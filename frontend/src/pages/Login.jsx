@@ -6,6 +6,7 @@ import axios from "axios";
 import { serverUrl } from "../App";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
 import {auth} from "../../firebase"
+import { ClipLoader } from "react-spinners";
 const Login = () => {
   const primaryColor = "#ff4d2d";
   const hoverColor = "#e64323";
@@ -21,10 +22,12 @@ const Login = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [serverError, setServerError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
 
   const handleLogin = async () => {
+    setLoading(true)
     let hasError = false;
 
     // Email validation
@@ -49,7 +52,9 @@ const Login = () => {
       setPasswordError("");
     }
 
-    if (hasError) return;
+    if (hasError) {
+      setLoading(false)
+    };
 
     // API call
     try {
@@ -58,8 +63,10 @@ const Login = () => {
         { email, password },
         { withCredentials: true }
       );
+      setLoading(false)
       navigate("/"); 
     } catch (error) {
+      setLoading(false)
       const msg = error.response?.data?.message || "Login failed";
       setServerError(msg);
     }
@@ -156,10 +163,11 @@ const Login = () => {
 
         {/* Login Button */}
         <button
+          disabled={loading}
           onClick={handleLogin}
           className="w-full font-semibold py-2 rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer"
         >
-          Login
+         {loading ? <ClipLoader size={20}/>: "Login"}
         </button>
 
         {/* Google Login */}

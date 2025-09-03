@@ -4,8 +4,10 @@ import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { serverUrl } from "../App";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
-import {auth} from "../../firebase"
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../firebase";
+import { ClipLoader } from "react-spinners";
+
 const Signup = () => {
   const primaryColor = "#ff4d2d";
   const hoverColor = "#e64323";
@@ -19,6 +21,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [mobileNo, setMobileNo] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // ✅ Error states
   const [fullNameError, setFullNameError] = useState("");
@@ -30,7 +33,7 @@ const Signup = () => {
 
   const handleSignup = async () => {
     let hasError = false;
-
+    setLoading(true);
     // Full Name validation
     if (!fullName.trim()) {
       setFullNameError("Full Name is required");
@@ -75,7 +78,10 @@ const Signup = () => {
       setPasswordError("");
     }
 
-    if (hasError) return;
+    if (hasError) {
+      setLoading(false);
+      return;
+    }
 
     // API call
     try {
@@ -84,8 +90,10 @@ const Signup = () => {
         { fullName, email, password, mobileNo, role },
         { withCredentials: true }
       );
+      setLoading(false);
       navigate("/");
     } catch (error) {
+      setLoading(false);
       // backend error handling
       const msg = error.response?.data?.message || "Signup failed";
       if (msg.toLowerCase().includes("email")) setEmailError(msg);
@@ -94,28 +102,31 @@ const Signup = () => {
     }
   };
 
-  const handleGoogleAuth = async ()=>{
-   try {
-     if(!mobileNo){
-      return alert("mobile no is required")
-     }
-     const provider = new GoogleAuthProvider()
-     const result = await signInWithPopup(auth, provider)
-     try {
-      const {data} = await axios.post(`${serverUrl}/api/auth/google-auth`,{
-        fullName: result.user.displayName,
-        email: result.user.email,
-        role,
-        mobileNo
-      },{withCredentials:true})
-
-     } catch (error) {
-      console.log(error)
-     }
-   } catch (error) {
-    console.log(error)
-   }
-  }
+  const handleGoogleAuth = async () => {
+    try {
+      if (!mobileNo) {
+        return alert("mobile no is required");
+      }
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      try {
+        const { data } = await axios.post(
+          `${serverUrl}/api/auth/google-auth`,
+          {
+            fullName: result.user.displayName,
+            email: result.user.email,
+            role,
+            mobileNo,
+          },
+          { withCredentials: true }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div
@@ -154,9 +165,7 @@ const Signup = () => {
 
         {/* Email */}
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-1">
-            Email
-          </label>
+          <label className="block text-gray-700 font-medium mb-1">Email</label>
           <input
             onChange={(e) => setEmail(e.target.value)}
             value={email}
@@ -231,7 +240,10 @@ const Signup = () => {
                 style={
                   role === r
                     ? { backgroundColor: primaryColor, color: "white" }
-                    : { border: `1px solid ${primaryColor}`, color: primaryColor }
+                    : {
+                        border: `1px solid ${primaryColor}`,
+                        color: primaryColor,
+                      }
                 }
               >
                 {r}
@@ -242,12 +254,16 @@ const Signup = () => {
 
         {/* Buttons */}
         <button
+          disabled={loading}
           onClick={handleSignup}
           className="w-full font-semibold py-2 rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer"
         >
-          Sign Up
+          {loading ? <ClipLoader size={20} /> : "Signup"}
         </button>
-        <button onClick={handleGoogleAuth} className="w-full mt-4 flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 border-gray-400 hover:bg-gray-100">
+        <button
+          onClick={handleGoogleAuth}
+          className="w-full mt-4 flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 border-gray-400 hover:bg-gray-100"
+        >
           <FcGoogle size={20} />
           <span>Sign up with google</span>
         </button>
