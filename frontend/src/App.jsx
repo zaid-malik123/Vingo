@@ -6,8 +6,7 @@ import useGetCurrentUser from "./hooks/useGetCurrentUser"
 
 export const serverUrl = "http://localhost:3000"
 const App = () => {
-  const user = useGetCurrentUser()
-  console.log(user)
+  useGetCurrentUser()
   return (
     <div>
       <Routes>
