@@ -65,7 +65,7 @@ const Login = () => {
         { email, password },
         { withCredentials: true }
       );
-      dispatch(setUserData(res.data))
+      dispatch(setUserData(res.data.user))
       setLoading(false)
       navigate("/"); 
     } catch (error) {

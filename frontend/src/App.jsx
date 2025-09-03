@@ -9,8 +9,7 @@ import { useSelector } from "react-redux"
 export const serverUrl = "http://localhost:3000"
 const App = () => {
   useGetCurrentUser()
-  const user = useSelector((state)=> state)
-  console.log(user)
+  const {user} = useSelector((state)=> state.userSlice)
   return (
     <div>
       <Routes>
