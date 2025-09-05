@@ -2,21 +2,40 @@ import { useState } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoSearch } from "react-icons/io5";
 import { IoCart } from "react-icons/io5";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RxCross1 } from "react-icons/rx";
+import axios from "axios";
+import { serverUrl } from "../App";
+import { useNavigate } from "react-router-dom";
+import { setCity, setUserData } from "../redux/userSlice";
 
 const Nav = () => {
-  const { user } = useSelector((state) => state.userSlice);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user, city } = useSelector((state) => state.userSlice);
   const [showInfo, setShowInfo] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+
+  const logoutHandler = async () => {
+    try {
+      await axios.get(`${serverUrl}/api/auth/logout`, {
+        withCredentials: true,
+      });
+      dispatch(setUserData(null));
+      dispatch(setCity(null));
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="w-full h-[80px] flex items-center justify-between md:justify-center gap-[30px] px-[20px] fixed top-0 z-[999] bg-[#fff9f6]">
-
       {showSearch && (
         <div className="w-[90%] h-[70px] bg-white shadow-lg rounded-lg  items-center gap-[20px]  flex fixed top-[80px] left-[5%]">
           <div className="flex items-center w-[30%] overflow-hidden gap-[10px] px-[10px] border-r-[2px] border-x-gray-400">
             <FaLocationDot className="w-[25px] h-[25px] text-[#ff4d2d] " />
-            <div className="w-[80%] text-gray-600 truncate">Saharanpur</div>
+            <div className="w-[80%] text-gray-600 truncate">{city}</div>
           </div>
           <div className="flex items-center gap-[10px] w-[80%]">
             <IoSearch size={25} className="text-[#ff4d2d]" />
@@ -45,7 +64,19 @@ const Nav = () => {
         </div>
       </div>
       <div className="flex items-center gap-4">
-       {showSearch ? <RxCross1 onClick={()=> setShowSearch(false)} size={25} className="text-[#ff4d2d] md:hidden cursor-pointer" /> :  <IoSearch onClick={()=> setShowSearch(true)} size={25} className="text-[#ff4d2d] md:hidden cursor-pointer" />}
+        {showSearch ? (
+          <RxCross1
+            onClick={() => setShowSearch(false)}
+            size={25}
+            className="text-[#ff4d2d] md:hidden cursor-pointer"
+          />
+        ) : (
+          <IoSearch
+            onClick={() => setShowSearch(true)}
+            size={25}
+            className="text-[#ff4d2d] md:hidden cursor-pointer"
+          />
+        )}
         <div className="relative cursor-pointer">
           <IoCart size={25} className="text-[#ff4d2d]" />
           <span className="absolute top-[-12px] right-[-9px] text-[#ff4d2d]">
@@ -68,7 +99,10 @@ const Nav = () => {
             <div className="md:hidden text-[#ff4d2d] font-semibold cursor-pointer">
               My Orders
             </div>
-            <div className="text-[17px] font-semibold text-[#ff4d2d]">
+            <div
+              onClick={logoutHandler}
+              className="text-[17px] font-semibold text-[#ff4d2d]"
+            >
               Logout
             </div>
           </div>
