@@ -83,7 +83,7 @@ const Login = () => {
           email: result.user.email,
         },{withCredentials:true})
        
-        console.log(data)
+        navigate("/")
   
        } catch (error) {
         console.log(error)
