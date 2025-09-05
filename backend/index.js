@@ -8,7 +8,7 @@ import cors from "cors"
 import { connectDb } from "./src/db/db.js";
 import authRoute from "./src/routes/auth.routes.js"
 import userRoute from "./src/routes/user.routes.js"
-
+import shopRoute from "./src/routes/shop.routes.js"
 
 const app = express();
 config();
@@ -25,6 +25,7 @@ app.use(cors({
 // routes
 app.use("/api/auth", authRoute)
 app.use("/api/user", userRoute)
+app.use("/api/shop", shopRoute)
 
 const port = process.env.PORT || 5000
 
