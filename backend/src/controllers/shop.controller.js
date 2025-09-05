@@ -1,31 +1,51 @@
-import { uploadImage } from "../service/imageKit.service.js"
-import Shop from "../models/shop.model.js"
-import Item from "../models/items.model.js"
+import { uploadImage } from "../service/imageKit.service.js";
+import Shop from "../models/shop.model.js";
+import Item from "../models/items.model.js";
 
-export const createShop = async (req, res, next)=>{
-try {
-    const {name, city, state, address} = req.body;
+export const createShop = async (req, res, next) => {
+  try {
+    const { name, city, state, address } = req.body;
 
     let image;
-
-    if(req.file){
-     image = await uploadImage(req.file)
+    if (req.file) {
+      image = await uploadImage(req.file);
     }
 
-   const shop = await Shop.create({
-    name,
-    city, 
-    state,
-    address,
-    image: image.url,
-    owner: req.userId
-   })
-   
-   await shop.populate("owner")
+    let shop = await Shop.findOne({ owner: req.userId });
 
-   return res.status(200).json("shop created successfully")
+    if (!shop) {
+      // Create new shop
+      shop = await Shop.create({
+        name,
+        city,
+        state,
+        address,
+        image: image?.url,
+        owner: req.userId,
+      });
+    } else {
+      // Update existing shop
+      shop = await Shop.findByIdAndUpdate(
+        shop._id,
+        {
+          name,
+          city,
+          state,
+          address,
+          image: image?.url || shop.image, // preserve old image if no new one
+        },
+        { new: true }
+      );
+    }
 
-} catch (error) {
-   res.status(500).json({ message: error.message }); 
-}
-}
+    await shop.populate("owner");
+
+    return res.status(200).json({
+      message: "Shop created/updated successfully",
+      shop,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
