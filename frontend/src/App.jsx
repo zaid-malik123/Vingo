@@ -5,10 +5,12 @@ import ForgotPassword from "./pages/ForgotPassword";
 import useGetCurrentUser from "./hooks/useGetCurrentUser";
 import { useSelector } from "react-redux";
 import Home from "./pages/Home";
+import useGetCurrentCity from "./hooks/useGetCurrentCity";
 
 export const serverUrl = "http://localhost:3000";
 const App = () => {
   useGetCurrentUser();
+  useGetCurrentCity();
   const { user } = useSelector((state) => state.userSlice);
   return (
     <div>
