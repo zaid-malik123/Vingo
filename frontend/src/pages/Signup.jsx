@@ -16,7 +16,7 @@ const Signup = () => {
   const bgColor = "#fff9f6";
   const borderColor = "#ddd";
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [showPass, setShowPass] = useState(false);
   const [role, setRole] = useState("user");
   const [fullName, setFullName] = useState("");
@@ -92,8 +92,7 @@ const Signup = () => {
         { fullName, email, password, mobileNo, role },
         { withCredentials: true }
       );
-      console.log(res.data.user)
-      dispatch(setUserData(res.data.user))
+      dispatch(setUserData(res.data.user));
       setLoading(false);
       navigate("/");
     } catch (error) {
@@ -124,7 +123,8 @@ const Signup = () => {
           },
           { withCredentials: true }
         );
-        navigate("/")
+        dispatch(setUserData(data.user));
+        navigate("/");
       } catch (error) {
         console.log(error);
       }

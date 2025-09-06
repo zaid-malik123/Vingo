@@ -4,8 +4,8 @@ import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { serverUrl } from "../App";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
-import {auth} from "../../firebase"
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../firebase";
 import { ClipLoader } from "react-spinners";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../redux/userSlice";
@@ -15,7 +15,7 @@ const Login = () => {
   const bgColor = "#fff9f6";
   const borderColor = "#ddd";
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [showPass, setShowPass] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,7 +29,7 @@ const Login = () => {
   const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
 
   const handleLogin = async () => {
-    setLoading(true)
+    setLoading(true);
     let hasError = false;
 
     // Email validation
@@ -55,8 +55,8 @@ const Login = () => {
     }
 
     if (hasError) {
-      setLoading(false)
-    };
+      setLoading(false);
+    }
 
     // API call
     try {
@@ -65,31 +65,34 @@ const Login = () => {
         { email, password },
         { withCredentials: true }
       );
-      dispatch(setUserData(res.data.user))
-      setLoading(false)
-      navigate("/"); 
+      dispatch(setUserData(res.data.user));
+      setLoading(false);
+      navigate("/");
     } catch (error) {
-      setLoading(false)
+      setLoading(false);
       const msg = error.response?.data?.message || "Login failed";
       setServerError(msg);
     }
   };
 
-   const handleGoogleAuth = async ()=>{
-       const provider = new GoogleAuthProvider()
-       const result = await signInWithPopup(auth, provider)
-       try {
-        const {data} = await axios.post(`${serverUrl}/api/auth/google-auth`,{
+  const handleGoogleAuth = async () => {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    try {
+      const { data } = await axios.post(
+        `${serverUrl}/api/auth/google-auth`,
+        {
           email: result.user.email,
-        },{withCredentials:true})
-       
-        navigate("/")
-  
-       } catch (error) {
-        console.log(error)
-       }
-     } 
-     
+        },
+        { withCredentials: true }
+      );
+      dispatch(setUserData(data.user));
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div
       className="min-h-screen w-full flex items-center justify-center p-4"
@@ -108,9 +111,7 @@ const Login = () => {
 
         {/* Email */}
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-1">
-            Email
-          </label>
+          <label className="block text-gray-700 font-medium mb-1">Email</label>
           <input
             onChange={(e) => setEmail(e.target.value)}
             value={email}
@@ -120,7 +121,9 @@ const Login = () => {
             type="email"
             placeholder="Enter your Email"
           />
-          {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
+          {emailError && (
+            <p className="text-red-500 text-sm mt-1">{emailError}</p>
+          )}
         </div>
 
         {/* Password */}
@@ -161,7 +164,9 @@ const Login = () => {
 
         {/* Server Error */}
         {serverError && (
-          <p className="text-red-500 text-center font-medium mb-3">{serverError}</p>
+          <p className="text-red-500 text-center font-medium mb-3">
+            {serverError}
+          </p>
         )}
 
         {/* Login Button */}
@@ -170,7 +175,7 @@ const Login = () => {
           onClick={handleLogin}
           className="w-full font-semibold py-2 rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer"
         >
-         {loading ? <ClipLoader size={20}/>: "Login"}
+          {loading ? <ClipLoader size={20} /> : "Login"}
         </button>
 
         {/* Google Login */}
