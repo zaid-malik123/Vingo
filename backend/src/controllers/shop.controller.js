@@ -49,3 +49,17 @@ export const createShop = async (req, res, next) => {
   }
 };
 
+export const getMyShop = async (req, res, next)=>{
+  try {
+    const shop = await Shop.findOne({owner: req.userId}).populate("owner items")
+
+    if(!shop){
+      return null
+    }
+
+   res.status(200).json({shop})
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
