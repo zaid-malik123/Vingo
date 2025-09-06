@@ -15,6 +15,7 @@ const Nav = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user, city } = useSelector((state) => state.userSlice);
+  const {shop} = useSelector((state) => state.ownerSlice);
   const [showInfo, setShowInfo] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
 
@@ -86,7 +87,9 @@ const Nav = () => {
 
         {user.role == "owner" ? (
           <>
-            <button className="hidden md:flex items-center gap-1 p-2 cursor-pointer rounded-full bg-[#ff4d2d]/10 text-[#ff4d2d]">
+           {shop && (
+            <>
+              <button className="hidden md:flex items-center gap-1 p-2 cursor-pointer rounded-full bg-[#ff4d2d]/10 text-[#ff4d2d]">
               <FaPlus size={20} />
               <span>Add Food Item</span>
             </button>
@@ -94,6 +97,9 @@ const Nav = () => {
             <button className="md:hidden flex items-center gap-1 p-2 cursor-pointer rounded-full bg-[#ff4d2d]/10 text-[#ff4d2d]">
               <FaPlus size={20} />
             </button>
+            
+            </>
+           )}
             <div className="hidden md:flex items-center gap-2 cursor-pointer relative px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium">        
                 <IoReceiptOutline size={20} />
                 <span>Pending Orders</span>
