@@ -7,11 +7,13 @@ import { useSelector } from "react-redux";
 import Home from "./pages/Home";
 import useGetCurrentCity from "./hooks/useGetCurrentCity";
 import CreateEditShop from "./pages/CreateEditShop";
+import useGetMyShop from "./hooks/useGetMyShop";
 
 export const serverUrl = "http://localhost:3000";
 const App = () => {
   useGetCurrentUser();
   useGetCurrentCity();
+  useGetMyShop()
   const { user } = useSelector((state) => state.userSlice);
   return (
     <div>

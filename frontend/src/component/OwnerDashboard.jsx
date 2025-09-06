@@ -19,6 +19,11 @@ const OwnerDashboard = () => {
           </div>
         </div>
       </div>}
+
+      {shop && 
+      <div className="w-full flex flex-col items-center gap-4 sm:px-6">  
+        <h1>Welcome to {shop?.shop?.name}</h1>
+      </div>}
     </div>
   );
 };
