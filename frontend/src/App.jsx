@@ -6,6 +6,7 @@ import useGetCurrentUser from "./hooks/useGetCurrentUser";
 import { useSelector } from "react-redux";
 import Home from "./pages/Home";
 import useGetCurrentCity from "./hooks/useGetCurrentCity";
+import CreateEditShop from "./pages/CreateEditShop";
 
 export const serverUrl = "http://localhost:3000";
 const App = () => {
@@ -30,6 +31,10 @@ const App = () => {
         <Route
           path="/"
           element={user ? <Home /> : <Navigate to={"/login"} />}
+        ></Route>
+         <Route
+          path="/create-edit-shop"
+          element={user ? <CreateEditShop /> : <Navigate to={"/login"} />}
         ></Route>
       </Routes>
     </div>
