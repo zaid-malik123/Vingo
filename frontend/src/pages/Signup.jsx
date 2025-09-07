@@ -263,7 +263,7 @@ const Signup = () => {
           onClick={handleSignup}
           className="w-full font-semibold py-2 rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer"
         >
-          {loading ? <ClipLoader size={20} /> : "Signup"}
+          {loading ? <ClipLoader color="white" size={20} /> : "Signup"}
         </button>
         <button
           onClick={handleGoogleAuth}
