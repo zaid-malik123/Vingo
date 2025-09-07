@@ -6,6 +6,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { serverUrl } from "../App";
 import { setMyShopData } from "../redux/ownerSlice";
+import { ClipLoader } from "react-spinners";
+
+
 
 const EditItem = () => {
   const { itemId } = useParams();
@@ -34,6 +37,7 @@ const EditItem = () => {
   const [foodType, setFoodType] = useState("veg");
   const [frontendImage, setFrontendImage] = useState(null);
   const [backendImage, setBackendImage] = useState(null);
+  const [loading, setLoading] = useState(false)
 
   const handleImage = (e) => {
     const file = e.target.files[0];
@@ -43,6 +47,7 @@ const EditItem = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
     try {
       const formData = new FormData();
       formData.append("name", name);
@@ -53,13 +58,15 @@ const EditItem = () => {
         formData.append("image", backendImage);
       }
       const res = await axios.post(
-        `${serverUrl}/api/item/create-item`,
+        `${serverUrl}/api/item/edit-item/${itemId}`,
         formData,
         { withCredentials: true }
       );
       dispatch(setMyShopData(res.data));
+      setLoading(false)
       navigate("/");
     } catch (error) {
+      setLoading(false)  
       console.log(error);
     }
   };
@@ -199,8 +206,8 @@ const EditItem = () => {
           </div>
 
           {/* Save Button */}
-          <button className="w-full bg-gradient-to-r from-[#ff4d2d] to-orange-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:scale-[1.02] transition-all">
-            Save Changes
+          <button disabled={loading} className="w-full bg-gradient-to-r from-[#ff4d2d] to-orange-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:scale-[1.02] transition-all">
+           {loading ? <ClipLoader size={20} color="white"/> : "Save Changes"}
           </button>
         </form>
       </div>

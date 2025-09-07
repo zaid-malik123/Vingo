@@ -6,6 +6,7 @@ import { useState } from "react";
 import axios from "axios";
 import { serverUrl } from "../App";
 import { setMyShopData } from "../redux/ownerSlice";
+import { ClipLoader } from "react-spinners";
 
 const CreateEditShop = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const CreateEditShop = () => {
   const [address, setAddress] = useState(shop?.shop?.address || currentAddress)
   const [frontendImage, setFrontendImage] = useState(shop?.shop?.image || null)
   const [backendImage, setBackendImage] = useState(shop?.shop?.image || null)
+  const [loading, setLoading] = useState(false)
 
   const handleImage = (e)=>{
   const file = e.target.files[0]
@@ -26,6 +28,7 @@ const CreateEditShop = () => {
   }
 
   const handleSubmit = async (e)=>{
+   setLoading(true) 
    e.preventDefault(); 
   try {
     const formData = new FormData()
@@ -38,8 +41,10 @@ const CreateEditShop = () => {
     }
     const res = await axios.post(`${serverUrl}/api/shop/create-edit`,formData,{withCredentials:true})
     dispatch(setMyShopData(res.data))
+    setLoading(false)
     navigate("/")
   } catch (error) {
+    setLoading(false)
     console.log(error)
   }
   }
@@ -133,7 +138,7 @@ const CreateEditShop = () => {
               placeholder="Enter Shop Address"
             />
           </div>
-          <button className="w-full bg-[#ff4d2d] text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-orange-600 hover:shadow-lg transition-all cursor-pointer">Save</button>
+          <button disabled={loading} className="w-full bg-[#ff4d2d] text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-orange-600 hover:shadow-lg transition-all cursor-pointer">{loading ? <ClipLoader size={20} color="white"/> : "Save"}</button>
         </form>
       </div>
     </div>

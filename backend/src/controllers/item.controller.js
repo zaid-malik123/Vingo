@@ -38,33 +38,31 @@ export const addItem = async (req, res, next) => {
 export const editItem = async (req, res, next) => {
   try {
     const itemId = req.params.itemId;
-
     const { name, category, foodType, price } = req.body;
 
-    let image;
+    // update data ek object me rakho
+    const updateData = { name, category, foodType, price };
 
+    // agar naya image aaya hai to hi updateData me daalo
     if (req.file) {
-      image = await uploadImage(req.file);
+      const uploadedImg = await uploadImage(req.file);
+      updateData.image = uploadedImg.url;
     }
 
-    const item = await Item.findByIdAndUpdate(itemId, {
-      name,
-      category,
-      foodType,
-      price,
-      image: image.url,
-    },{new:true});
+    const item = await Item.findByIdAndUpdate(itemId, updateData, { new: true });
 
-    if(!item){
-      res.status(400).json({ message: "Item not found" });
+    if (!item) {
+      return res.status(400).json({ message: "Item not found" });
     }
 
-   return res.status(200).json(item);
+    const shop = await Shop.findOne({ owner: req.userId }).populate("items");
 
+    return res.status(200).json(shop);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 export const findSingleItem = async (req, res, next)=>{
 try {

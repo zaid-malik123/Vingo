@@ -6,6 +6,7 @@ import { useState } from "react";
 import axios from "axios";
 import { serverUrl } from "../App";
 import { setMyShopData } from "../redux/ownerSlice";
+import { ClipLoader } from "react-spinners";
 
 const AddFoodItem = () => {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ const AddFoodItem = () => {
   const [foodType, setFoodType] = useState("veg");
   const [frontendImage, setFrontendImage] = useState(null);
   const [backendImage, setBackendImage] = useState(null);
+  const [loading, setLoading] = useState(false)
 
   const handleImage = (e) => {
     const file = e.target.files[0];
@@ -40,6 +42,7 @@ const AddFoodItem = () => {
   };
 
   const handleSubmit = async (e) => {
+    setLoading(true)
     e.preventDefault();
     try {
       const formData = new FormData();
@@ -56,8 +59,10 @@ const AddFoodItem = () => {
         { withCredentials: true }
       );
       dispatch(setMyShopData(res.data));
+      setLoading(false)
       navigate("/");
     } catch (error) {
+      setLoading(false)  
       console.log(error);
     }
   };
@@ -171,8 +176,8 @@ const AddFoodItem = () => {
           </div>
 
           {/* Save Button */}
-          <button className="w-full bg-gradient-to-r from-[#ff4d2d] to-orange-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:scale-[1.02] transition-all">
-            Save Item
+          <button disabled={loading} className="w-full bg-gradient-to-r from-[#ff4d2d] to-orange-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:scale-[1.02] transition-all">
+            {loading ? <ClipLoader size={20} color="white"/> : "Add Item"}
           </button>
         </form>
       </div>
