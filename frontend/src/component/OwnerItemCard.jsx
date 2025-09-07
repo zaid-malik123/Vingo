@@ -1,9 +1,22 @@
 import { FaPen } from "react-icons/fa";
 import { ImBin2 } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
+import { serverUrl } from "../App";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setMyShopData } from "../redux/ownerSlice";
 
 const OwnerItemCard = ({ item }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+   const handleDeleteItem = async ()=>{
+  try {
+    const res = await axios.get(`${serverUrl}/api/item/delete-item/${item._id}`,{withCredentials:true})
+    dispatch(setMyShopData(res.data))
+  } catch (error) {
+    console.log(error)
+  }
+  }
 
   return (
     <div className="flex bg-white rounded-xl shadow-md hover:shadow-lg overflow-hidden border border-gray-200 hover:border-[#ff4d2d] transition-all duration-300 w-full max-w-2xl transform hover:scale-[1.01]">
@@ -46,11 +59,12 @@ const OwnerItemCard = ({ item }) => {
             </div>
 
             {/* Delete Button */}
-            <div
+            <div 
+              onClick={handleDeleteItem} 
               className="p-2 rounded-full hover:bg-red-50 text-red-500 cursor-pointer transition"
               title="Delete Item"
             >
-              <ImBin2 size={18} />
+              <ImBin2  size={18} />
             </div>
           </div>
         </div>

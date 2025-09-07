@@ -4,10 +4,14 @@ import { FaUtensils } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { FaPen } from "react-icons/fa";
 import OwnerItemCard from "./OwnerItemCard";
+import axios from "axios";
+import { serverUrl } from "../App";
 
 const OwnerDashboard = () => {
   const navigate = useNavigate();
   const { shop } = useSelector((state) => state.ownerSlice);
+
+ 
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 flex flex-col items-center">
