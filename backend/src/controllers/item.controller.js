@@ -66,3 +66,18 @@ export const editItem = async (req, res, next) => {
   }
 };
 
+export const findSingleItem = async (req, res, next)=>{
+try {
+  const {itemId} = req.params;
+
+  const item = await Item.findById(itemId)
+
+  if(!item){
+    return res.status(400).json({message: "item not found"})
+  }
+
+  res.status(200).json(item)
+} catch (error) {
+  res.status(500).json({ message: error.message });
+}
+}
