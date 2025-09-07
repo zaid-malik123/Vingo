@@ -12,7 +12,7 @@ export const addItem = async (req, res, next) => {
       image = await uploadImage(req.file);
     }
 
-    const shop = await Shop.findOne({ owner: req.userId });
+    const shop = await Shop.findOne({ owner: req.userId }).populate("items")
 
     if (!shop) {
       res.status(400).json({ message: "Shop not found" });
@@ -26,8 +26,10 @@ export const addItem = async (req, res, next) => {
       image: image.url,
       shop: shop._id,
     });
-
-    return res.status(201).json(item);
+    shop.items.push(item._id)
+    await shop.save()
+    await shop.populate("items owner") 
+    return res.status(201).json(shop);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
