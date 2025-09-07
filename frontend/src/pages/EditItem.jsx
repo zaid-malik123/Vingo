@@ -7,7 +7,7 @@ import axios from "axios";
 import { serverUrl } from "../App";
 import { setMyShopData } from "../redux/ownerSlice";
 
-const AddFoodItem = () => {
+const EditItem = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { shop } = useSelector((state) => state.ownerSlice);
@@ -170,4 +170,4 @@ const AddFoodItem = () => {
   );
 };
 
-export default AddFoodItem;
+export default EditItem;

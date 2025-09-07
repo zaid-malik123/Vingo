@@ -12,7 +12,7 @@ export const addItem = async (req, res, next) => {
       image = await uploadImage(req.file);
     }
 
-    const shop = await Shop.findOne({ owner: req.userId }).populate("items")
+    const shop = await Shop.findOne({ owner: req.userId })
 
     if (!shop) {
       res.status(400).json({ message: "Shop not found" });
