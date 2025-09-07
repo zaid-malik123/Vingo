@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Nav from "./Nav";
 import { FaUtensils } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { FaPen } from "react-icons/fa";
 const OwnerDashboard = () => {
   const navigate = useNavigate()
   const { shop } = useSelector((state) => state.ownerSlice);
@@ -27,13 +28,17 @@ const OwnerDashboard = () => {
         </h1>
         
        <div className="bg-white shadow-lg rounded-xl overflow-hidden border border-orange-100 hover:shadow-2xl transition-all duration-300 w-full max-w-3xl relative">
+        <div onClick={()=> navigate("/create-edit-shop")} className="absolute top-4 right-4 bg-[#ff4d2d] text-white p-2 rounded-full shadow-md hover:bg-orange-600 transition-colors cursor-pointer">
+          <FaPen size={20} />
+        </div>
         <img className="w-full h-48 sm:h-64 object-cover" src={shop.shop.image} alt="" />
-       </div>
          <div className="p-4 sm:p-6">
              <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">{shop.shop.name}</h1>
               <p className="text-gray-500 mb-4">{shop.shop.city},{shop.shop.state}</p>
               <p className="text-gray-500 mb-4">{shop.shop.address}</p>
          </div>
+       </div>
+        
       </div>}
     </div>
   );

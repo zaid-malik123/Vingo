@@ -12,12 +12,12 @@ const CreateEditShop = () => {
   const dispatch = useDispatch()
   const { shop } = useSelector((state) => state.ownerSlice);
   const { user, currentCity, currentState, currentAddress } = useSelector((state) => state.userSlice);
-  const [name, setName] = useState(shop?.name || "")
-  const [city, setCity] = useState(shop?.address || currentCity)
-  const [state, setState] = useState(shop?.state || currentState)
-  const [address, setAddress] = useState(shop?.address || currentAddress)
-  const [frontendImage, setFrontendImage] = useState(shop?.image || null)
-  const [backendImage, setBackendImage] = useState(shop?.image || null)
+  const [name, setName] = useState(shop?.shop?.name || "")
+  const [city, setCity] = useState(shop?.shop?.address || currentCity)
+  const [state, setState] = useState(shop?.shop?.state || currentState)
+  const [address, setAddress] = useState(shop?.shop?.address || currentAddress)
+  const [frontendImage, setFrontendImage] = useState(shop?.shop?.image || null)
+  const [backendImage, setBackendImage] = useState(shop?.shop?.image || null)
 
   const handleImage = (e)=>{
   const file = e.target.files[0]
@@ -37,8 +37,8 @@ const CreateEditShop = () => {
       formData.append("image", backendImage)
     }
     const res = await axios.post(`${serverUrl}/api/shop/create-edit`,formData,{withCredentials:true})
-    console.log(res.data)
     dispatch(setMyShopData(res.data))
+    navigate("/")
   } catch (error) {
     console.log(error)
   }

@@ -13,8 +13,17 @@ export const serverUrl = "http://localhost:3000";
 const App = () => {
   useGetCurrentUser();
   useGetCurrentCity();
-  useGetMyShop()
-  const { user } = useSelector((state) => state.userSlice);
+  const loadingShop = useGetMyShop();
+    const { user } = useSelector((state) => state.userSlice);
+  if (loadingShop) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Loading...
+      </div>
+    );
+  }
+
+
   return (
     <div>
       <Routes>
@@ -34,7 +43,7 @@ const App = () => {
           path="/"
           element={user ? <Home /> : <Navigate to={"/login"} />}
         ></Route>
-         <Route
+        <Route
           path="/create-edit-shop"
           element={user ? <CreateEditShop /> : <Navigate to={"/login"} />}
         ></Route>
