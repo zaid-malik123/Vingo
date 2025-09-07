@@ -10,44 +10,54 @@ import { ClipLoader } from "react-spinners";
 
 const CreateEditShop = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const { shop } = useSelector((state) => state.ownerSlice);
-  const { user, currentCity, currentState, currentAddress } = useSelector((state) => state.userSlice);
-  const [name, setName] = useState(shop?.shop?.name || "")
-  const [city, setCity] = useState(shop?.shop?.address || currentCity)
-  const [state, setState] = useState(shop?.shop?.state || currentState)
-  const [address, setAddress] = useState(shop?.shop?.address || currentAddress)
-  const [frontendImage, setFrontendImage] = useState(shop?.shop?.image || null)
-  const [backendImage, setBackendImage] = useState(shop?.shop?.image || null)
-  const [loading, setLoading] = useState(false)
+  const { currentCity, currentState, currentAddress } = useSelector((state) => state.userSlice);
 
-  const handleImage = (e)=>{
-  const file = e.target.files[0]
-  setBackendImage(file)
-  setFrontendImage(URL.createObjectURL(file)) 
-  }
+  // ✅ no need for shop?.shop anymore
+  const [name, setName] = useState(shop?.name || "");
+  const [city, setCity] = useState(shop?.city || currentCity || "");
+  const [state, setState] = useState(shop?.state || currentState || "");
+  const [address, setAddress] = useState(shop?.address || currentAddress || "");
+  const [frontendImage, setFrontendImage] = useState(shop?.image || null);
+  const [backendImage, setBackendImage] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e)=>{
-   setLoading(true) 
-   e.preventDefault(); 
-  try {
-    const formData = new FormData()
-    formData.append("name", name)
-    formData.append("city", city)
-    formData.append("state", state)
-    formData.append("address", address)
-    if(backendImage){
-      formData.append("image", backendImage)
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setBackendImage(file);
+    setFrontendImage(URL.createObjectURL(file));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("city", city);
+      formData.append("state", state);
+      formData.append("address", address);
+      if (backendImage) {
+        formData.append("image", backendImage);
+      }
+
+      const res = await axios.post(`${serverUrl}/api/shop/create-edit`, formData, {
+        withCredentials: true,
+      });
+
+      // ✅ backend always returns { shop }
+      dispatch(setMyShopData(res.data.shop));
+
+      setLoading(false);
+      navigate("/");
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
     }
-    const res = await axios.post(`${serverUrl}/api/shop/create-edit`,formData,{withCredentials:true})
-    dispatch(setMyShopData(res.data))
-    setLoading(false)
-    navigate("/")
-  } catch (error) {
-    setLoading(false)
-    console.log(error)
-  }
-  }
+  };
 
   return (
     <div className="flex justify-center flex-col items-center p-6 bg-gradient-to-br from-orange-50 relative to-white min-h-screen">
@@ -66,24 +76,25 @@ const CreateEditShop = () => {
             {shop ? "Edit Shop" : "Add Shop"}
           </div>
         </div>
-        <form onSubmit={(e)=>handleSubmit(e)} className="space-y-5">
-          {/* Name    */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Name */}
           <div>
-            <label className="block:text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Name
             </label>
             <input
-              onChange={(e)=> setName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               value={name}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 mt-2"
               type="text"
               placeholder="Enter Shop Name"
+              required
             />
           </div>
 
           {/* Image */}
           <div>
-            <label className="block:text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Shop Image
             </label>
             <input
@@ -92,53 +103,68 @@ const CreateEditShop = () => {
               accept="image/*"
               onChange={handleImage}
             />
-            {frontendImage && <div className="mt-4">
-              <img className="w-full h-48 object-cover rounded-lg border" src={frontendImage} alt="" />
-            </div>}
+            {frontendImage && (
+              <div className="mt-4">
+                <img
+                  className="w-full h-48 object-cover rounded-lg border"
+                  src={frontendImage}
+                  alt="Preview"
+                />
+              </div>
+            )}
           </div>
 
           {/* City & State */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block:text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Shop City
               </label>
               <input
-                onChange={(e)=> setCity(e.target.value)}
+                onChange={(e) => setCity(e.target.value)}
                 value={city}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 mt-2"
                 type="text"
                 placeholder="Enter Shop City"
+                required
               />
             </div>
             <div>
-              <label className="block:text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Shop State
               </label>
-              <input 
-                onChange={(e)=> setState(e.target.value)}
+              <input
+                onChange={(e) => setState(e.target.value)}
                 value={state}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 mt-2"
                 type="text"
                 placeholder="Enter Shop State"
+                required
               />
             </div>
           </div>
 
           {/* Address */}
           <div>
-            <label className="block:text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Shop Address
             </label>
-            <input 
-              onChange={(e)=> setAddress(e.target.value)}
+            <input
+              onChange={(e) => setAddress(e.target.value)}
               value={address}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 mt-2"
               type="text"
               placeholder="Enter Shop Address"
+              required
             />
           </div>
-          <button disabled={loading} className="w-full bg-[#ff4d2d] text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-orange-600 hover:shadow-lg transition-all cursor-pointer">{loading ? <ClipLoader size={20} color="white"/> : "Save"}</button>
+
+          <button
+            disabled={loading}
+            className="w-full bg-[#ff4d2d] text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-orange-600 hover:shadow-lg transition-all cursor-pointer"
+          >
+            {loading ? <ClipLoader size={20} color="white" /> : "Save"}
+          </button>
         </form>
       </div>
     </div>

@@ -4,14 +4,10 @@ import { FaUtensils } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { FaPen } from "react-icons/fa";
 import OwnerItemCard from "./OwnerItemCard";
-import axios from "axios";
-import { serverUrl } from "../App";
 
 const OwnerDashboard = () => {
   const navigate = useNavigate();
   const { shop } = useSelector((state) => state.ownerSlice);
-
- 
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 flex flex-col items-center">
@@ -19,7 +15,7 @@ const OwnerDashboard = () => {
       <Nav />
 
       {/* No Shop Added */}
-      {!shop?.shop && (
+      {!shop && (
         <div className="flex justify-center items-center p-6 mt-12">
           <div className="w-full max-w-md bg-white shadow-xl rounded-3xl p-8 border border-gray-100 hover:shadow-2xl transition-all">
             <div className="flex flex-col items-center text-center">
@@ -43,11 +39,11 @@ const OwnerDashboard = () => {
       )}
 
       {/* Shop Details */}
-      {shop?.shop && (
+      {shop && (
         <div className="w-full flex flex-col items-center gap-6 px-6 mt-10">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 flex items-center gap-3 text-center">
             <FaUtensils className="text-[#ff4d2d] w-12 h-12" />
-            Welcome to {shop?.shop?.name}
+            Welcome to {shop?.name}
           </h1>
 
           <div className="bg-white shadow-xl rounded-3xl overflow-hidden border border-orange-100 hover:shadow-2xl transition-all duration-300 w-full max-w-4xl relative">
@@ -62,26 +58,26 @@ const OwnerDashboard = () => {
             {/* Banner Image */}
             <img
               className="w-full h-56 sm:h-72 object-cover"
-              src={shop.shop.image}
+              src={shop.image}
               alt="Restaurant"
             />
 
             {/* Shop Info */}
             <div className="p-6">
               <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                {shop.shop.name}
+                {shop.name}
               </h1>
               <p className="text-gray-600 mb-2">
-                {shop.shop.city}, {shop.shop.state}
+                {shop.city}, {shop.state}
               </p>
-              <p className="text-gray-600">{shop.shop.address}</p>
+              <p className="text-gray-600">{shop.address}</p>
             </div>
           </div>
         </div>
       )}
 
       {/* No Items Added */}
-      {shop?.shop?.items?.length === 0 && (
+      {shop?.items?.length === 0 && (
         <div className="flex justify-center items-center p-6 mt-12">
           <div className="w-full max-w-md bg-white shadow-xl rounded-3xl p-8 border border-gray-100 hover:shadow-2xl transition-all">
             <div className="flex flex-col items-center text-center">
@@ -105,15 +101,14 @@ const OwnerDashboard = () => {
       )}
 
       {/* Items Grid */}
-      {shop?.shop?.items?.length > 0 && (
+      {shop?.items?.length > 0 && (
         <div className="w-full max-w-6xl px-6 mt-10">
           <h2 className="text-2xl font-semibold text-gray-900 mb-6">
             Your Menu
           </h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {shop.shop.items.map((item, idx) => (
+            {shop.items.map((item, idx) => (
               <OwnerItemCard key={idx} item={item} />
-              
             ))}
           </div>
         </div>

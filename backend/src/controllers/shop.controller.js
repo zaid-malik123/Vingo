@@ -41,8 +41,7 @@ export const createShop = async (req, res, next) => {
     await shop.populate("owner items");
 
     return res.status(200).json({
-      message: "Shop created/updated successfully",
-      shop,
+      shop
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

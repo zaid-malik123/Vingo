@@ -29,7 +29,7 @@ export const addItem = async (req, res, next) => {
     shop.items.push(item._id)
     await shop.save()
     await shop.populate("items owner") 
-    return res.status(201).json(shop);
+    return res.status(201).json({shop});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -57,7 +57,7 @@ export const editItem = async (req, res, next) => {
 
     const shop = await Shop.findOne({ owner: req.userId }).populate("items");
 
-    return res.status(200).json(shop);
+    return res.status(200).json({shop});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -81,7 +81,7 @@ export const deleteItem = async (req, res, next)=>{
 
     await shop.populate("items")
 
-    return res.status(200).json(shop)
+    return res.status(200).json({shop})
 
   } catch (error) {
     res.status(500).json({ message: error.message });

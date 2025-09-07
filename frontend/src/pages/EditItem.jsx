@@ -62,7 +62,7 @@ const EditItem = () => {
         formData,
         { withCredentials: true }
       );
-      dispatch(setMyShopData(res.data));
+      dispatch(setMyShopData(res.data.shop));
       setLoading(false)
       navigate("/");
     } catch (error) {
