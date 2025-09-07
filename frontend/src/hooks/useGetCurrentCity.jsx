@@ -12,11 +12,12 @@ const useGetCurrentCity = () => {
       const lon = position.coords.longitude;
       const lat = position.coords.latitude;
       const API_KEY = import.meta.env.VITE_GEOCODING_API_KEY;
+      // const API_KEY= import.meta.env.VITE_GEOPIFY_API_KEY
       try {
         const res = await axios.get(
           `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${API_KEY}`
         );
-    
+        // console.log(res.data)
         const components = res?.data?.results[0]?.components;
 
         const city =

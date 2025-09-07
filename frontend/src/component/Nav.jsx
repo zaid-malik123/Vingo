@@ -10,12 +10,13 @@ import { serverUrl } from "../App";
 import { useNavigate } from "react-router-dom";
 import { setCity, setUserData } from "../redux/userSlice";
 import { IoReceiptOutline } from "react-icons/io5";
+import { ImSpinner2 } from "react-icons/im";
 
 const Nav = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user, currentCity } = useSelector((state) => state.userSlice);
-  const {shop} = useSelector((state) => state.ownerSlice);
+  const { shop } = useSelector((state) => state.ownerSlice);
   const [showInfo, setShowInfo] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
 
@@ -55,8 +56,16 @@ const Nav = () => {
       {user.role == "user" && (
         <div className="md:w-[60%] lg:w-[40%] h-[70px] bg-white shadow-lg rounded-lg  items-center gap-[20px] hidden md:flex">
           <div className="flex items-center w-[30%] overflow-hidden gap-[10px] px-[10px] border-r-[2px] border-x-gray-400">
-            <FaLocationDot className="w-[25px] h-[25px] text-[#ff4d2d] " />
-            <div className="w-[80%] text-gray-600 truncate">{currentCity}</div>
+            <FaLocationDot className="w-[25px] h-[25px] text-[#ff4d2d]" />
+            <div className="w-[80%] text-gray-600 truncate flex items-center gap-2">
+              {currentCity ? (
+                currentCity
+              ) : (
+                <span className="flex items-center gap-2 text-gray-400">
+                  <ImSpinner2 className="animate-spin" /> Loading...
+                </span>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-[10px] w-[80%]">
             <IoSearch size={25} className="text-[#ff4d2d]" />
@@ -87,27 +96,30 @@ const Nav = () => {
 
         {user.role == "owner" ? (
           <>
-           {shop && (
-            <>
-              <button className="hidden md:flex items-center gap-1 p-2 cursor-pointer rounded-full bg-[#ff4d2d]/10 text-[#ff4d2d]">
-              <FaPlus size={20} />
-              <span>Add Food Item</span>
-            </button>
+            {shop && (
+              <>
+                <button className="hidden md:flex items-center gap-1 p-2 cursor-pointer rounded-full bg-[#ff4d2d]/10 text-[#ff4d2d]">
+                  <FaPlus size={20} />
+                  <span>Add Food Item</span>
+                </button>
 
-            <button className="md:hidden flex items-center gap-1 p-2 cursor-pointer rounded-full bg-[#ff4d2d]/10 text-[#ff4d2d]">
-              <FaPlus size={20} />
-            </button>
-            
-            </>
-           )}
-            <div className="hidden md:flex items-center gap-2 cursor-pointer relative px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium">        
-                <IoReceiptOutline size={20} />
-                <span>Pending Orders</span>
-                <span className="absolute -right-2 -top-2 text-xs font-bold text-white bg-[#ff4d2d] rounded-full px-[6px] py-[1px] ">0</span>     
+                <button className="md:hidden flex items-center gap-1 p-2 cursor-pointer rounded-full bg-[#ff4d2d]/10 text-[#ff4d2d]">
+                  <FaPlus size={20} />
+                </button>
+              </>
+            )}
+            <div className="hidden md:flex items-center gap-2 cursor-pointer relative px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium">
+              <IoReceiptOutline size={20} />
+              <span>Pending Orders</span>
+              <span className="absolute -right-2 -top-2 text-xs font-bold text-white bg-[#ff4d2d] rounded-full px-[6px] py-[1px] ">
+                0
+              </span>
             </div>
-              <div className="md:hidden flex items-center gap-2 cursor-pointer relative px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium">        
-                <IoReceiptOutline size={20} />  
-                <span className="absolute -right-2 -top-2 text-xs font-bold text-white bg-[#ff4d2d] rounded-full px-[6px] py-[1px] ">0</span>  
+            <div className="md:hidden flex items-center gap-2 cursor-pointer relative px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium">
+              <IoReceiptOutline size={20} />
+              <span className="absolute -right-2 -top-2 text-xs font-bold text-white bg-[#ff4d2d] rounded-full px-[6px] py-[1px] ">
+                0
+              </span>
             </div>
           </>
         ) : (

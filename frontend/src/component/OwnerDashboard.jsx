@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 const OwnerDashboard = () => {
   const navigate = useNavigate()
   const { shop } = useSelector((state) => state.ownerSlice);
+  // console.log(shop)
   return (
     <div className="w-full min-h-screen bg-[#fff9f6] flex flex-col items-center">
       <Nav />
@@ -22,7 +23,17 @@ const OwnerDashboard = () => {
 
       {shop && 
       <div className="w-full flex flex-col items-center gap-4 sm:px-6">  
-        <h1>Welcome to {shop?.shop?.name}</h1>
+        <h1 className="text-2xl sm:text-3xl text-gray-900 flex items-center gap-3 mt-8 text-center"><FaUtensils className="text-[#ff4d2d] w-14 h-14" />Welcome to {shop?.shop?.name}
+        </h1>
+        
+       <div className="bg-white shadow-lg rounded-xl overflow-hidden border border-orange-100 hover:shadow-2xl transition-all duration-300 w-full max-w-3xl relative">
+        <img className="w-full h-48 sm:h-64 object-cover" src={shop.shop.image} alt="" />
+       </div>
+         <div className="p-4 sm:p-6">
+             <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">{shop.shop.name}</h1>
+              <p className="text-gray-500 mb-4">{shop.shop.city},{shop.shop.state}</p>
+              <p className="text-gray-500 mb-4">{shop.shop.address}</p>
+         </div>
       </div>}
     </div>
   );
