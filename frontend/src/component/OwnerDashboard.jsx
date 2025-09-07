@@ -1,30 +1,35 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Nav from "./Nav";
 import { FaUtensils } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { FaPen } from "react-icons/fa";
 import OwnerItemCard from "./OwnerItemCard";
+
 const OwnerDashboard = () => {
   const navigate = useNavigate();
   const { shop } = useSelector((state) => state.ownerSlice);
+
   return (
-    <div className="w-full min-h-screen bg-[#fff9f6] flex flex-col items-center">
+    <div className="w-full min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 flex flex-col items-center">
+      {/* Navbar */}
       <Nav />
+
+      {/* No Shop Added */}
       {!shop?.shop && (
-        <div className="flex justify-center items-center p-4 sm:p-6">
-          <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+        <div className="flex justify-center items-center p-6 mt-12">
+          <div className="w-full max-w-md bg-white shadow-xl rounded-3xl p-8 border border-gray-100 hover:shadow-2xl transition-all">
             <div className="flex flex-col items-center text-center">
-              <FaUtensils className="text-[#ff4d2d] w-16 h-16 sm:w-20 sm:h-20 mb-4" />
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
-                Add your resturant
+              <FaUtensils className="text-[#ff4d2d] w-20 h-20 mb-5" />
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                Add Your Restaurant
               </h2>
-              <p className="text-gray-600 mb-4 text-sm sm:text-base">
-                Join ovr food delivery platform and reach thousands of hungry
+              <p className="text-gray-600 mb-6 text-base leading-relaxed">
+                Join our food delivery platform and reach thousands of hungry
                 customers every day.
               </p>
               <button
                 onClick={() => navigate("/create-edit-shop")}
-                className="bg-[#ff4d2d] text-white px-5 sm:px-6 py-2 rounded-full font-medium shadow-md hover:bg-orange-600 transition-colors duration-200"
+                className="bg-gradient-to-r from-[#ff4d2d] to-orange-500 text-white px-6 py-3 rounded-full font-semibold shadow-md hover:scale-[1.02] transition-transform"
               >
                 Get Started
               </button>
@@ -33,67 +38,82 @@ const OwnerDashboard = () => {
         </div>
       )}
 
+      {/* Shop Details */}
       {shop?.shop && (
-        <div className="w-full flex flex-col items-center gap-4 sm:px-6">
-          <h1 className="text-2xl sm:text-3xl text-gray-900 flex items-center gap-3 mt-8 text-center">
-            <FaUtensils className="text-[#ff4d2d] w-14 h-14" />
+        <div className="w-full flex flex-col items-center gap-6 px-6 mt-10">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 flex items-center gap-3 text-center">
+            <FaUtensils className="text-[#ff4d2d] w-12 h-12" />
             Welcome to {shop?.shop?.name}
           </h1>
 
-          <div className="bg-white shadow-lg rounded-xl overflow-hidden border border-orange-100 hover:shadow-2xl transition-all duration-300 w-full max-w-3xl relative">
+          <div className="bg-white shadow-xl rounded-3xl overflow-hidden border border-orange-100 hover:shadow-2xl transition-all duration-300 w-full max-w-4xl relative">
+            {/* Edit Button */}
             <div
               onClick={() => navigate("/create-edit-shop")}
-              className="absolute top-4 right-4 bg-[#ff4d2d] text-white p-2 rounded-full shadow-md hover:bg-orange-600 transition-colors cursor-pointer"
+              className="absolute top-5 right-5 bg-[#ff4d2d] text-white p-3 rounded-full shadow-md hover:bg-orange-600 cursor-pointer transition-colors"
             >
-              <FaPen size={20} />
+              <FaPen size={18} />
             </div>
+
+            {/* Banner Image */}
             <img
-              className="w-full h-48 sm:h-64 object-cover"
+              className="w-full h-56 sm:h-72 object-cover"
               src={shop.shop.image}
-              alt=""
+              alt="Restaurant"
             />
-            <div className="p-4 sm:p-6">
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
+
+            {/* Shop Info */}
+            <div className="p-6">
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
                 {shop.shop.name}
               </h1>
-              <p className="text-gray-500 mb-4">
-                {shop.shop.city},{shop.shop.state}
+              <p className="text-gray-600 mb-2">
+                {shop.shop.city}, {shop.shop.state}
               </p>
-              <p className="text-gray-500 mb-4">{shop.shop.address}</p>
+              <p className="text-gray-600">{shop.shop.address}</p>
             </div>
           </div>
         </div>
       )}
 
-      {shop?.shop?.items?.length == 0 && (
-        <div className="flex justify-center items-center p-4 sm:p-6">
-          <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+      {/* No Items Added */}
+      {shop?.shop?.items?.length === 0 && (
+        <div className="flex justify-center items-center p-6 mt-12">
+          <div className="w-full max-w-md bg-white shadow-xl rounded-3xl p-8 border border-gray-100 hover:shadow-2xl transition-all">
             <div className="flex flex-col items-center text-center">
-              <FaUtensils className="text-[#ff4d2d] w-16 h-16 sm:w-20 sm:h-20 mb-4" />
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
-                Add your Food Item
+              <FaUtensils className="text-[#ff4d2d] w-20 h-20 mb-5" />
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                Add Your Food Item
               </h2>
-              <p className="text-gray-600 mb-4 text-sm sm:text-base">
-                Join ovr food delivery platform and reach thousands of hungry
-                customers every day.
+              <p className="text-gray-600 mb-6 text-base leading-relaxed">
+                Start building your menu and attract food lovers to your
+                restaurant.
               </p>
               <button
                 onClick={() => navigate("/add-food")}
-                className="bg-[#ff4d2d] text-white px-5 sm:px-6 py-2 rounded-full font-medium shadow-md hover:bg-orange-600 transition-colors duration-200"
+                className="bg-gradient-to-r from-[#ff4d2d] to-orange-500 text-white px-6 py-3 rounded-full font-semibold shadow-md hover:scale-[1.02] transition-transform"
               >
-                Get Started
+                Add Item
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {shop?.shop?.items?.length > 0 &&
-        shop.shop.items.map((item, idx) => (
-          <div className="flex flex-col items-center gap-4 w-full max-w-3xl mt-3" key={idx}>
-            <OwnerItemCard item={item} />
+      {/* Items Grid */}
+      {shop?.shop?.items?.length > 0 && (
+        <div className="w-full max-w-6xl px-6 mt-10">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+            Your Menu
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {shop.shop.items.map((item, idx) => (
+              <OwnerItemCard key={idx} item={item} />
+              
+            ))}
           </div>
-        ))}
+        </div>
+      )}
     </div>
   );
 };

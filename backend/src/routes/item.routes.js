@@ -9,6 +9,6 @@ router.post("/create-item",isAuth,upload.single("image"), addItem)
 
 router.post("/edit-item/:itemId",isAuth,upload.single("image"),editItem)
 
-router.post("/get-single-item/:itemId",isAuth,findSingleItem)
+router.get("/get-single-item/:itemId",isAuth,findSingleItem)
 
 export default router;

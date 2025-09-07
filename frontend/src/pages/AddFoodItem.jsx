@@ -11,6 +11,7 @@ const AddFoodItem = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { shop } = useSelector((state) => state.ownerSlice);
+
   const categories = [
     "Snacks",
     "Main Course",
@@ -24,6 +25,7 @@ const AddFoodItem = () => {
     "Fast Food",
     "Others",
   ];
+
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
@@ -43,17 +45,16 @@ const AddFoodItem = () => {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("price", price);
-      formData.append("category", category)
-      formData.append("foodType", foodType)
+      formData.append("category", category);
+      formData.append("foodType", foodType);
       if (backendImage) {
         formData.append("image", backendImage);
       }
       const res = await axios.post(
         `${serverUrl}/api/item/create-item`,
-        formData, 
+        formData,
         { withCredentials: true }
       );
-      console.log(res.data)
       dispatch(setMyShopData(res.data));
       navigate("/");
     } catch (error) {
@@ -62,56 +63,64 @@ const AddFoodItem = () => {
   };
 
   return (
-    <div className="flex justify-center flex-col items-center p-6 bg-gradient-to-br from-orange-50 relative to-white min-h-screen">
-      <div
+    <div className="flex justify-center items-center p-6 bg-gradient-to-br from-orange-50 via-white to-orange-100 min-h-screen">
+      {/* Back Button */}
+      <button
         onClick={() => navigate("/")}
-        className="absolute top-[20px] left-[20px] z-[10] mb-[10px]"
+        className="absolute top-6 left-6 flex items-center gap-2 text-orange-600 font-medium hover:text-orange-700 transition"
       >
-        <IoArrowBackOutline size={35} className="text-[#ff4d2d]" />
-      </div>
-      <div className="max-w-lg w-full bg-white shadow-lg rounded-2xl p-8 border border-orange-100">
-        <div className="flex flex-col items-center mb-6">
-          <div className="bg-orange-100 p-4 rounded-full mb-4">
-            <FaUtensils className="w-16 h-16 text-[#ff4d2d]" />
+        <IoArrowBackOutline size={28} />
+        Back
+      </button>
+
+      {/* Card */}
+      <div className="max-w-lg w-full bg-white shadow-2xl rounded-3xl p-8 border border-orange-100">
+        {/* Header */}
+        <div className="flex flex-col items-center mb-8">
+          <div className="bg-orange-100 p-5 rounded-full shadow-inner mb-4">
+            <FaUtensils className="w-14 h-14 text-[#ff4d2d]" />
           </div>
-          <div className="text-3xl font-extrabold text-gray-900">Add Food</div>
+          <h1 className="text-3xl font-bold text-gray-900">Add Food</h1>
+          <p className="text-gray-500 text-sm mt-1">Create a new menu item</p>
         </div>
-        <form onSubmit={(e) => handleSubmit(e)} className="space-y-5">
-          {/* Name    */}
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Name */}
           <div>
-            <label className="block:text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700">
               Name
             </label>
             <input
               onChange={(e) => setName(e.target.value)}
               value={name}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 mt-2"
+              className="w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 mt-2 transition"
               type="text"
-              placeholder="Enter Food Name"
+              placeholder="Enter food name"
             />
           </div>
 
-          {/* Food Price */}
+          {/* Price */}
           <div>
-            <label className="block:text-sm font-medium text-gray-700 mb-1">
-              Food Price
+            <label className="block text-sm font-medium text-gray-700">
+              Price
             </label>
             <input
               onChange={(e) => setPrice(e.target.value)}
               value={price}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 mt-2"
-              type="text"
-              placeholder="Enter Food Price"
+              className="w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 mt-2 transition"
+              type="number"
+              placeholder="Enter food price"
             />
           </div>
 
           {/* Image */}
           <div>
-            <label className="block:text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700">
               Food Image
             </label>
             <input
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 mt-2"
+              className="w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 mt-2 transition"
               type="file"
               accept="image/*"
               onChange={handleImage}
@@ -119,7 +128,7 @@ const AddFoodItem = () => {
             {frontendImage && (
               <div className="mt-4">
                 <img
-                  className="w-full h-48 object-cover rounded-lg border"
+                  className="w-full h-52 object-cover rounded-xl border shadow"
                   src={frontendImage}
                   alt=""
                 />
@@ -129,15 +138,15 @@ const AddFoodItem = () => {
 
           {/* Category */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Select Category
+            <label className="block text-sm font-medium text-gray-700">
+              Category
             </label>
             <select
               onChange={(e) => setCategory(e.target.value)}
               value={category}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 mt-2"
+              className="w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 mt-2 transition"
             >
-              <option value="">Select Food Category</option>
+              <option value="">Select category</option>
               {categories.map((cat, index) => (
                 <option key={index} value={cat}>
                   {cat}
@@ -145,24 +154,25 @@ const AddFoodItem = () => {
               ))}
             </select>
           </div>
-          
+
           {/* Food Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Select Food Type
+            <label className="block text-sm font-medium text-gray-700">
+              Food Type
             </label>
             <select
               onChange={(e) => setFoodType(e.target.value)}
               value={foodType}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 mt-2"
+              className="w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 mt-2 transition"
             >
-             <option value="veg">Veg</option>
-             <option value="non-veg">Non-Veg</option>
+              <option value="veg">Veg</option>
+              <option value="non-veg">Non-Veg</option>
             </select>
           </div>
 
-          <button className="w-full bg-[#ff4d2d] text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-orange-600 hover:shadow-lg transition-all cursor-pointer">
-            Save
+          {/* Save Button */}
+          <button className="w-full bg-gradient-to-r from-[#ff4d2d] to-orange-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:scale-[1.02] transition-all">
+            Save Item
           </button>
         </form>
       </div>
