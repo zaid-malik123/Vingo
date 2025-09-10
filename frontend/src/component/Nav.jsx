@@ -162,7 +162,13 @@ const Nav = () => {
       {showSearch && user?.role === "user" && (
         <div className="absolute top-[82px] left-[5%] w-[90%] h-[55px] bg-white shadow-lg rounded-lg flex items-center gap-3 px-3 md:hidden">
           <FaLocationDot className="w-5 h-5 text-[#ff4d2d]" />
-          <div className="flex-1 text-gray-600 truncate">{currentCity}</div>
+          <div className="flex-1 text-gray-600 truncate"> {currentCity ? (
+                currentCity
+              ) : (
+                <span className="flex items-center gap-2 text-gray-400">
+                  <ImSpinner2 className="animate-spin" /> Loading...
+                </span>
+              )}</div>
           <IoSearch size={22} className="text-[#ff4d2d]" />
           <input
             className="flex-1 px-2 text-gray-700 outline-none text-sm"
