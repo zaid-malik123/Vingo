@@ -17,13 +17,7 @@ const App = () => {
   useGetCurrentCity();
   const loadingShop = useGetMyShop();
     const { user } = useSelector((state) => state.userSlice);
-  if (loadingShop) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        Loading...
-      </div>
-    );
-  }
+
 
 
   return (
