@@ -73,7 +73,7 @@ const UserDashboard = () => {
 
       {/* Category Section */}
       <section className="w-full max-w-6xl flex flex-col gap-6 items-start p-4">
-        <h1 className="text-gray-800 text-2xl sm:text-3xl font-semibold">
+        <h1 className="text-gray-800 text-2xl sm:text-3xl">
           Inspiration for your first order
         </h1>
         <div className="w-full relative">
@@ -110,7 +110,7 @@ const UserDashboard = () => {
 
       {/* Shop Section */}
       <section className="w-full max-w-6xl flex flex-col gap-6 items-start p-4">
-        <h1 className="text-gray-800 text-2xl sm:text-3xl font-semibold">
+        <h1 className="text-gray-800 text-2xl sm:text-3xl">
           Best Shops in {currentCity || "your city"}
         </h1>
 
@@ -145,6 +145,15 @@ const UserDashboard = () => {
           )}
         </div>
       </section>
+
+     
+     <section className="w-full max-w-6xl flex flex-col gap-6 items-start p-4">
+       <h1 className="text-gray-800 text-2xl sm:text-3xl">
+          Suggested Food Items
+        </h1>
+     </section>
+
+
     </div>
   );
 };

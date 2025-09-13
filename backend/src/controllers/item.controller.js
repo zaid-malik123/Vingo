@@ -12,7 +12,7 @@ export const addItem = async (req, res, next) => {
       image = await uploadImage(req.file);
     }
 
-    const shop = await Shop.findOne({ owner: req.userId })
+    const shop = await Shop.findOne({ owner: req.userId });
 
     if (!shop) {
       res.status(400).json({ message: "Shop not found" });
@@ -26,10 +26,10 @@ export const addItem = async (req, res, next) => {
       image: image.url,
       shop: shop._id,
     });
-    shop.items.push(item._id)
-    await shop.save()
-    await shop.populate("items owner") 
-    return res.status(201).json({shop});
+    shop.items.push(item._id);
+    await shop.save();
+    await shop.populate("items owner");
+    return res.status(201).json({ shop });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -49,7 +49,9 @@ export const editItem = async (req, res, next) => {
       updateData.image = uploadedImg.url;
     }
 
-    const item = await Item.findByIdAndUpdate(itemId, updateData, { new: true });
+    const item = await Item.findByIdAndUpdate(itemId, updateData, {
+      new: true,
+    });
 
     if (!item) {
       return res.status(400).json({ message: "Item not found" });
@@ -57,51 +59,72 @@ export const editItem = async (req, res, next) => {
 
     const shop = await Shop.findOne({ owner: req.userId }).populate("items");
 
-    return res.status(200).json({shop});
+    return res.status(200).json({ shop });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-export const deleteItem = async (req, res, next)=>{
+export const deleteItem = async (req, res, next) => {
   try {
-    const {itemId} = req.params;
+    const { itemId } = req.params;
 
-    const item = await Item.findByIdAndDelete(itemId)
+    const item = await Item.findByIdAndDelete(itemId);
 
-    if(!item){
+    if (!item) {
       return res.status(400).json({ message: "Item not found" });
     }
 
-    const shop = await Shop.findOne({owner: req.userId})
+    const shop = await Shop.findOne({ owner: req.userId });
 
-    shop.items = shop.items.filter(i=> i != item._id)
+    shop.items = shop.items.filter((i) => i != item._id);
 
     await shop.save();
 
-    await shop.populate("items")
+    await shop.populate("items");
 
-    return res.status(200).json({shop})
-
+    return res.status(200).json({ shop });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
 
-export const findSingleItem = async (req, res, next)=>{
-try {
-  const {itemId} = req.params;
+export const findSingleItem = async (req, res, next) => {
+  try {
+    const { itemId } = req.params;
 
-  const item = await Item.findById(itemId)
+    const item = await Item.findById(itemId);
 
-  if(!item){
-    return res.status(400).json({message: "item not found"})
+    if (!item) {
+      return res.status(400).json({ message: "item not found" });
+    }
+
+    res.status(200).json(item);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
+};
 
-  res.status(200).json(item)
-} catch (error) {
-  res.status(500).json({ message: error.message });
-}
-}
+export const getItemByCity = async (req, res, next) => {
+  try {
+    const { city } = req.params;
 
+    if (!city) return;
 
+    const shops = await Shop.find({
+      city: { $regex: new RegExp(`^${city}$`, "i") },
+    }).populate("items");
+
+    if (!shops) {
+      return res.status(400).json({ message: "shops not found" });
+    }
+
+    const shopIds = shops.map((s)=> s._id)
+
+    const items = await Item.find({shop: {$in: shopIds}})
+
+    return res.status(200).json(items)
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
