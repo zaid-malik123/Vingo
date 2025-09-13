@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 const UserDashboard = () => {
   const { user, currentCity } = useSelector((state) => state.userSlice);
+  console.log("current city is :- ", currentCity)
   const cateScrollRef = useRef();
   const [showCateLeftButton, setShowCateLeftButton] = useState(false);
   const [showCateRightButton, setShowCateRightButton] = useState(false);

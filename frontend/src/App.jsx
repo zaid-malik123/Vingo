@@ -10,11 +10,13 @@ import CreateEditShop from "./pages/CreateEditShop";
 import useGetMyShop from "./hooks/useGetMyShop";
 import AddFoodItem from "./pages/AddFoodItem";
 import EditItem from "./pages/EditItem";
+import useGetShopByCity from "./hooks/useGetShopByCity";
 
 export const serverUrl = "http://localhost:3000";
 const App = () => {
   useGetCurrentUser();
   useGetCurrentCity();
+  useGetShopByCity()
   const loadingShop = useGetMyShop();
     const { user } = useSelector((state) => state.userSlice);
 
