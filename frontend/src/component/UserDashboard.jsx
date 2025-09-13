@@ -5,10 +5,11 @@ import Loader from "./Loader";
 import { FaCircleChevronLeft, FaCircleChevronRight } from "react-icons/fa6";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import FoodCard from "./FoodCard";
 
 const UserDashboard = () => {
-  const { currentCity, shopsInMyCity } = useSelector((state) => state.userSlice);
-
+  const { currentCity, shopsInMyCity, itemsInMyCity } = useSelector((state) => state.userSlice);
+  console.log(itemsInMyCity)
   const cateScrollRef = useRef();
   const shopScrollRef = useRef();
 
@@ -146,11 +147,16 @@ const UserDashboard = () => {
         </div>
       </section>
 
-     
+      {/* food Section */}
      <section className="w-full max-w-6xl flex flex-col gap-6 items-start p-4">
        <h1 className="text-gray-800 text-2xl sm:text-3xl">
           Suggested Food Items
         </h1>
+        <div className="w-full h-auto flex flex-wrap gap-[20px] justify-center">
+          {itemsInMyCity?.map((item, idx)=> (
+            <FoodCard key={idx} data={item}/>
+          ))}
+        </div>
      </section>
 
 

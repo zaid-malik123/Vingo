@@ -1,12 +1,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { serverUrl } from "../App";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setMyShopData } from "../redux/ownerSlice";
 
 
 const useGetMyShop = () => {
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.userSlice);
   const [loading, setLoading] = useState(true); // new state
 
   const fetchShop = async () => {
@@ -22,7 +23,7 @@ const useGetMyShop = () => {
 
   useEffect(() => {
     fetchShop();
-  }, []);
+  }, [user]);
 
   return loading; // return loading state
 };
