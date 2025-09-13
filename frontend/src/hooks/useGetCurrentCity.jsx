@@ -9,6 +9,7 @@ const useGetCurrentCity = () => {
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(async (position) => {
+      
       const lon = position.coords.longitude;
       const lat = position.coords.latitude;
       const API_KEY = import.meta.env.VITE_GEOCODING_API_KEY;

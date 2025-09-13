@@ -93,7 +93,7 @@ const UserDashboard = () => {
             {isCategoryLoading ? (
               <Loader count={6} width="180px" height="180px" />
             ) : (
-              categories.map((c, i) => <CategoryCard c={c} key={i} />)
+              categories.map((c, i) => <CategoryCard image={c.image} name={c.category} key={i} />)
             )}
           </div>
 
@@ -131,7 +131,7 @@ const UserDashboard = () => {
             {isShopLoading ? (
               <Loader count={5} width="200px" height="200px" />
             ) : (
-              shopsInMyCity?.map((c, i) => <CategoryCard c={c} key={i} />)
+              shopsInMyCity?.map((c, i) => <CategoryCard image={c.image} name={c.name} key={i} />)
             )}
           </div>
 
