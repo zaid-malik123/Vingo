@@ -17,7 +17,8 @@ const useGetCurrentCity = () => {
         const res = await axios.get(
           `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${API_KEY}`
         );
-        // console.log(res.data)
+        
+        console.log(res.data)
         const components = res?.data?.results[0]?.components;
 
         const city =
