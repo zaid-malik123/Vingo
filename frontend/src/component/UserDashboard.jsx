@@ -8,8 +8,10 @@ import { useSelector } from "react-redux";
 import FoodCard from "./FoodCard";
 
 const UserDashboard = () => {
-  const { currentCity, shopsInMyCity, itemsInMyCity } = useSelector((state) => state.userSlice);
-  console.log(itemsInMyCity)
+  const { currentCity, shopsInMyCity, itemsInMyCity } = useSelector(
+    (state) => state.userSlice
+  );
+  console.log(itemsInMyCity);
   const cateScrollRef = useRef();
   const shopScrollRef = useRef();
 
@@ -20,7 +22,8 @@ const UserDashboard = () => {
 
   // Real loading based on data availability
   const isCategoryLoading = !categories || categories.length === 0;
-  const isShopLoading = !currentCity || !shopsInMyCity || shopsInMyCity.length === 0;
+  const isShopLoading =
+    !currentCity || !shopsInMyCity || shopsInMyCity.length === 0;
 
   const scrollHandler = (ref, direction) => {
     if (ref.current) {
@@ -35,7 +38,9 @@ const UserDashboard = () => {
     const element = ref.current;
     if (element) {
       setLeftButton(element.scrollLeft > 0);
-      setRightButton(element.scrollLeft + element.clientWidth < element.scrollWidth);
+      setRightButton(
+        element.scrollLeft + element.clientWidth < element.scrollWidth
+      );
     }
   };
 
@@ -43,7 +48,11 @@ const UserDashboard = () => {
   useEffect(() => {
     if (!cateScrollRef.current) return;
     const handleScroll = () =>
-      updateButton(cateScrollRef, setShowCateLeftButton, setShowCateRightButton);
+      updateButton(
+        cateScrollRef,
+        setShowCateLeftButton,
+        setShowCateRightButton
+      );
     handleScroll();
     const element = cateScrollRef.current;
     element.addEventListener("scroll", handleScroll);
@@ -57,7 +66,11 @@ const UserDashboard = () => {
   useEffect(() => {
     if (!shopScrollRef.current) return;
     const handleScroll = () =>
-      updateButton(shopScrollRef, setShowShopLeftButton, setShowShopRightButton);
+      updateButton(
+        shopScrollRef,
+        setShowShopLeftButton,
+        setShowShopRightButton
+      );
     handleScroll();
     const element = shopScrollRef.current;
     element.addEventListener("scroll", handleScroll);
@@ -94,7 +107,9 @@ const UserDashboard = () => {
             {isCategoryLoading ? (
               <Loader count={6} width="180px" height="180px" />
             ) : (
-              categories.map((c, i) => <CategoryCard image={c.image} name={c.category} key={i} />)
+              categories.map((c, i) => (
+                <CategoryCard image={c.image} name={c.category} key={i} />
+              ))
             )}
           </div>
 
@@ -132,7 +147,9 @@ const UserDashboard = () => {
             {isShopLoading ? (
               <Loader count={5} width="200px" height="200px" />
             ) : (
-              shopsInMyCity?.map((c, i) => <CategoryCard image={c.image} name={c.name} key={i} />)
+              shopsInMyCity?.map((c, i) => (
+                <CategoryCard image={c.image} name={c.name} key={i} />
+              ))
             )}
           </div>
 
@@ -147,19 +164,27 @@ const UserDashboard = () => {
         </div>
       </section>
 
-      {/* food Section */}
-     <section className="w-full max-w-6xl flex flex-col gap-6 items-start p-4">
-       <h1 className="text-gray-800 text-2xl sm:text-3xl">
+      {/* Food Section */}
+      <section className="w-full max-w-6xl flex flex-col gap-6 items-start p-4">
+        <h1 className="text-gray-800 text-2xl sm:text-3xl">
           Suggested Food Items
         </h1>
-        <div className="w-full h-auto flex flex-wrap gap-[20px] justify-center">
-          {itemsInMyCity?.map((item, idx)=> (
-            <FoodCard key={idx} data={item}/>
-          ))}
+
+        <div className="w-full h-auto flex flex-wrap gap-5 justify-center sm:justify-start">
+          {!itemsInMyCity || itemsInMyCity.length === 0 ? (
+            <Loader count={6} width="250px" height="260px" />
+          ) : (
+            itemsInMyCity.map((item, idx) => (
+              <div
+                key={idx}
+                className="w-full max-w-[280px] sm:w-[250px] flex-shrink-0"
+              >
+                <FoodCard data={item} />
+              </div>
+            ))
+          )}
         </div>
-     </section>
-
-
+      </section>
     </div>
   );
 };
