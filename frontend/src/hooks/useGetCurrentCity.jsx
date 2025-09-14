@@ -1,48 +1,64 @@
 import axios from "axios";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setAddress, setCity, setState } from "../redux/userSlice";
 
 const useGetCurrentCity = () => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.userSlice);
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(async (position) => {
-      
-      const lon = position.coords.longitude;
-      const lat = position.coords.latitude;
-      const API_KEY = import.meta.env.VITE_GEOCODING_API_KEY;
-      // const API_KEY= import.meta.env.VITE_GEOPIFY_API_KEY
-      try {
-        const res = await axios.get(
-          `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${API_KEY}`
-        );
-        
-        const components = res?.data?.results[0]?.components;
-
-        const city =
-          components?.city ||
-          components?.town ||
-          components?.village ||
-          components?.suburb;
-        const state = components?.state;
-        const address = res.data.results[0].formatted
-        
-        if (city) {
-          dispatch(setCity(city));
-          dispatch(setState(state));
-          dispatch(setAddress(address))
-        }
-      } catch (error) {
-        console.error("Error fetching city:", error);
+    const getLocation = () => {
+      if (!navigator.geolocation) {
+        console.error("Geolocation is not supported by this browser.");
+        return;
       }
-    });
-  }, [user, dispatch]);
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lon = position.coords.longitude;
+          const lat = position.coords.latitude;
+          const API_KEY = import.meta.env.VITE_GEOPIFY_API_KEY;
+
+          try {
+            const res = await axios.get(
+              `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lon}&apiKey=${API_KEY}`
+            );
+
+            const place = res?.data?.features?.[0]?.properties;
+            if (!place) {
+              console.error("No location data found.");
+              return;
+            }
+
+            // 🔹 City extraction with fallbacks
+            const city =
+              place?.city ||
+              place?.town ||
+              place?.village ||
+              place?.county ||
+              place?.state_district ||
+              place?.suburb ||
+              "Unknown";
+
+            const state = place?.state || "Unknown";
+            const address = place?.formatted || "Unknown Address";
+
+            // 🔹 Dispatching to Redux
+            dispatch(setCity(city));
+            dispatch(setState(state));
+            dispatch(setAddress(address));
+          } catch (error) {
+            console.error("Error fetching city:", error);
+          }
+        },
+        (error) => {
+          console.error("Error getting geolocation:", error.message);
+        }
+      );
+    };
+
+    getLocation();
+  }, [dispatch]);
 };
 
 export default useGetCurrentCity;
-
-// https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${API_KEY}
-
-// https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lon}&format=json&apiKey=${API_KEY}

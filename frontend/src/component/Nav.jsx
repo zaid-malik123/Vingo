@@ -121,10 +121,10 @@ const Nav = () => {
             <button className="hidden md:block px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] text-sm font-medium hover:bg-[#ff4d2d]/20 transition">
               My Orders
             </button>
-            <div className="relative cursor-pointer">
+            <div onClick={()=> navigate("/cart")} className="relative cursor-pointer">
               <IoCart size={24} className="text-[#ff4d2d]" />
               <span className="absolute -top-2 -right-2 text-xs font-bold text-white bg-[#ff4d2d] rounded-full px-[6px] py-[1px]">
-                0
+                {cartItems.length}
               </span>
             </div>
           </>

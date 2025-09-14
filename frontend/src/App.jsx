@@ -12,6 +12,7 @@ import AddFoodItem from "./pages/AddFoodItem";
 import EditItem from "./pages/EditItem";
 import useGetShopByCity from "./hooks/useGetShopByCity";
 import useGetItemsByCity from "./hooks/useGetItemsByCity";
+import Cart from "./pages/Cart";
 
 export const serverUrl = "http://localhost:3000";
 const App = () => {
@@ -54,6 +55,10 @@ const App = () => {
           <Route
           path="/edit-item/:itemId"
           element={user ? <EditItem /> : <Navigate to={"/login"} />}
+        ></Route>
+         <Route
+          path="/cart"
+          element={user ? <Cart /> : <Navigate to={"/login"} />}
         ></Route>
       </Routes>
     </div>

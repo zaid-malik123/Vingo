@@ -32,20 +32,27 @@ export const userSlice = createSlice({
     setItemsInMyCity: (state, action) => {
       state.itemsInMyCity = action.payload;
     },
-    setItemsInMyCity: (state, action) => {
-      state.itemsInMyCity = action.payload;
-    },
     addToCart: (state, action) => {
       const cartItem = action.payload;
-      const existingItem = state.cartItems.find((i)=> i.id == cartItem.id)
-      if(existingItem){
-        existingItem.quantity+= cartItem.quantity
+      const existingItem = state.cartItems.find((i) => i.id === cartItem.id);
+
+      if (existingItem) {
+        existingItem.quantity += cartItem.quantity;
+      } else {
+        state.cartItems.push(cartItem);
       }
-      state.cartItems.push(cartItem)
     },
   },
 });
 
-export const { setUserData, setCity, setState, setAddress, setShopsInMyCity, setItemsInMyCity, addToCart } = userSlice.actions;
+export const {
+  setUserData,
+  setCity,
+  setState,
+  setAddress,
+  setShopsInMyCity,
+  setItemsInMyCity,
+  addToCart,
+} = userSlice.actions;
 
 export default userSlice.reducer;
