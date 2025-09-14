@@ -12,7 +12,6 @@ const useGetMyShop = () => {
   const fetchShop = async () => {
     try {
       const res = await axios.get(`${serverUrl}/api/shop/get-my`, { withCredentials: true });
-      console.log("shop data:", res.data);
       dispatch(setMyShopData(res.data.shop));
     } catch (error) {
       console.log("get-my error:", error);

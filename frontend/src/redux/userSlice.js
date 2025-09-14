@@ -32,6 +32,8 @@ export const userSlice = createSlice({
     setItemsInMyCity: (state, action) => {
       state.itemsInMyCity = action.payload;
     },
+
+    // ✅ Add to Cart
     addToCart: (state, action) => {
       const cartItem = action.payload;
       const existingItem = state.cartItems.find((i) => i.id === cartItem.id);
@@ -39,8 +41,29 @@ export const userSlice = createSlice({
       if (existingItem) {
         existingItem.quantity += cartItem.quantity;
       } else {
-        state.cartItems.push(cartItem);
+        state.cartItems.push({ ...cartItem, quantity: cartItem.quantity || 1 });
       }
+    },
+
+    // ✅ Decrease Quantity
+    decreaseQuantity: (state, action) => {
+      const itemId = action.payload;
+      const existingItem = state.cartItems.find((i) => i.id === itemId);
+
+      if (existingItem) {
+        if (existingItem.quantity > 1) {
+          existingItem.quantity -= 1;
+        } else {
+          // agar quantity 1 thi, remove kar do
+          state.cartItems = state.cartItems.filter((i) => i.id !== itemId);
+        }
+      }
+    },
+
+    // ✅ Remove from Cart
+    removeFromCart: (state, action) => {
+      const itemId = action.payload;
+      state.cartItems = state.cartItems.filter((i) => i.id !== itemId);
     },
   },
 });
@@ -53,6 +76,8 @@ export const {
   setShopsInMyCity,
   setItemsInMyCity,
   addToCart,
+  decreaseQuantity,
+  removeFromCart,
 } = userSlice.actions;
 
 export default userSlice.reducer;
