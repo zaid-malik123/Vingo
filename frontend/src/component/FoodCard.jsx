@@ -6,9 +6,11 @@ import { FaMinus } from "react-icons/fa6";
 import { FaPlus } from "react-icons/fa6";
 import { useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../redux/userSlice";
 const FoodCard = ({ data }) => {
   const [quantity, setQuantity] = useState(0);
-
+  const dispatch = useDispatch();
   // Render stars based on rating
   const renderStars = (rating = 0) => {
     const stars = [];
@@ -49,17 +51,23 @@ const FoodCard = ({ data }) => {
       {/* Content Section */}
       <div className="flex-1 flex flex-col p-4">
         {/* Title */}
-        <h1 className="font-semibold text-gray-900 text-base truncate">{data.name}</h1>
+        <h1 className="font-semibold text-gray-900 text-base truncate">
+          {data.name}
+        </h1>
 
         {/* Rating */}
         <div className="flex items-center gap-1 mt-1">
           {renderStars(data.rating?.average || 0)}
-          <span className="text-xs text-gray-500">({data.rating?.count || 0})</span>
+          <span className="text-xs text-gray-500">
+            ({data.rating?.count || 0})
+          </span>
         </div>
 
         {/* Price + Controls */}
         <div className="flex items-center justify-between mt-auto pt-4">
-          <span className="font-bold text-[#ff4d2d] text-lg">₹{data.price}</span>
+          <span className="font-bold text-[#ff4d2d] text-lg">
+            ₹{data.price}
+          </span>
 
           <div className="flex items-center border rounded-full overflow-hidden shadow-sm bg-gray-50">
             {/* Decrease */}
@@ -82,7 +90,22 @@ const FoodCard = ({ data }) => {
             </button>
 
             {/* Cart */}
-            <button className="bg-[#ff4d2d] text-white px-3 py-2 hover:bg-[#e04428] transition">
+            <button
+              onClick={() =>
+                dispatch(
+                  addToCart({
+                    id: data._id,
+                    name: data.name,
+                    price: data.price,
+                    image: data.image,
+                    shop: data.shop,
+                    quantity,
+                    foodType: data.foodType,
+                  })
+                )
+              }
+              className="bg-[#ff4d2d] text-white px-3 py-2 hover:bg-[#e04428] transition"
+            >
               <FaShoppingCart />
             </button>
           </div>

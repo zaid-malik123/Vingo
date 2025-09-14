@@ -13,7 +13,7 @@ import { setCity, setUserData } from "../redux/userSlice";
 const Nav = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, currentCity } = useSelector((state) => state.userSlice);
+  const { user, currentCity, cartItems } = useSelector((state) => state.userSlice);
   const { shop } = useSelector((state) => state.ownerSlice);
   const [showInfo, setShowInfo] = useState(false);
   const [showSearch, setShowSearch] = useState(false);

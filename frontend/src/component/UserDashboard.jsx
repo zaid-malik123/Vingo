@@ -11,7 +11,6 @@ const UserDashboard = () => {
   const { currentCity, shopsInMyCity, itemsInMyCity } = useSelector(
     (state) => state.userSlice
   );
-  console.log(itemsInMyCity);
   const cateScrollRef = useRef();
   const shopScrollRef = useRef();
 
