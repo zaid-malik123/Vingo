@@ -92,7 +92,8 @@ const Signup = () => {
         { fullName, email, password, mobileNo, role },
         { withCredentials: true }
       );
-      dispatch(setUserData(res.data.user));
+      console.log(res.data)
+      dispatch(setUserData(res.data.createdUser));
       setLoading(false);
       navigate("/");
     } catch (error) {

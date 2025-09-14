@@ -15,13 +15,15 @@ import useGetItemsByCity from "./hooks/useGetItemsByCity";
 import Cart from "./pages/Cart";
 
 export const serverUrl = "http://localhost:3000";
+
 const App = () => {
+ const { user } = useSelector((state) => state.userSlice);
   useGetCurrentUser();
   useGetCurrentCity();
   useGetShopByCity();
   useGetItemsByCity();
-  const loadingShop = useGetMyShop();
-    const { user } = useSelector((state) => state.userSlice);
+  useGetMyShop();
+    
 
 
 

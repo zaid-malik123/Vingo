@@ -171,7 +171,7 @@ const UserDashboard = () => {
 
         <div className="w-full h-auto flex flex-wrap gap-5 justify-center sm:justify-start">
           {!itemsInMyCity || itemsInMyCity.length === 0 ? (
-            <Loader count={6} width="250px" height="260px" />
+            <Loader count={5} width="250px" height="260px" />
           ) : (
             itemsInMyCity.map((item, idx) => (
               <div
