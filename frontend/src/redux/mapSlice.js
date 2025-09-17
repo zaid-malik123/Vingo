@@ -17,12 +17,12 @@ export const mapSlice = createSlice({
       state.location.lat = lat
       state.location.lon = lon
     },
-    setAddress: (state, action)=>{
+    setUserAddress: (state, action)=>{
      state.address = action.payload
     }
   },
 })
 
-export const {setLocation, setAddress  } = mapSlice.actions
+export const {setLocation, setUserAddress  } = mapSlice.actions
 
 export default mapSlice.reducer
