@@ -3,13 +3,31 @@ import { useNavigate } from "react-router-dom";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoIosSearch } from "react-icons/io";
 import { TbCurrentLocation } from "react-icons/tb";
-import { MapContainer, Marker, TileLayer } from "react-leaflet";
-import { useSelector } from "react-redux";
+import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import { useDispatch, useSelector } from "react-redux";
 import "leaflet/dist/leaflet.css";
+import { setLocation } from "../redux/mapSlice";
+
+const RecenterMap = ({ location }) => {
+  const map = useMap();
+  if (location?.lat && location?.lon) {
+    map.setView([location.lat, location.lon], 16, { animate: true });
+  }
+  return null;
+};
+
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { location, address } = useSelector((state) => state.mapSlice);
+  const dispatch = useDispatch()
+  const onDragEnd = (e)=>{
+   const {lat, lng} = e.target._latlng
+   dispatch(setLocation({lat, lon:lng}))
+   const map = useMap()
+   map.setView([lat, lng], 16,{animate:true})
+  }
+
   return (
     <div className="min-h-screen bg-[#fff9f6] flex items-center justify-center p-6">
       <button
@@ -34,6 +52,7 @@ const Checkout = () => {
               placeholder="Enter your delivery address"
               className="flex-1 border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ff4d2d]"
               type="text"
+              value={address}
             />
             <button className="bg-[#ff4d2d] hover:bg-[#e64526] text-white px-3 py-2 rounded-lg flex items-center justify-center">
               <IoIosSearch size={17} />
@@ -53,7 +72,8 @@ const Checkout = () => {
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <Marker position={[location?.lat, location?.lon]}></Marker>
+                <RecenterMap location={location}/>
+                <Marker draggable eventHandlers={{dragend:onDragEnd}} position={[location?.lat, location?.lon]}></Marker>
               </MapContainer>
             </div>
           </div>
