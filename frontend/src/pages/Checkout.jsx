@@ -5,6 +5,9 @@ import { IoIosSearch } from "react-icons/io";
 import { TbCurrentLocation } from "react-icons/tb";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import { useDispatch, useSelector } from "react-redux";
+import { MdDeliveryDining } from "react-icons/md";
+import { FaMobileAlt } from "react-icons/fa";
+import { FaRegCreditCard } from "react-icons/fa6";
 import "leaflet/dist/leaflet.css";
 import { setLocation, setUserAddress } from "../redux/mapSlice";
 import { useEffect, useState } from "react";
@@ -25,6 +28,7 @@ const Checkout = () => {
   const API_KEY = import.meta.env.VITE_GEOPIFY_API_KEY;
   const { location, address } = useSelector((state) => state.mapSlice);
   const [addressInput, setAddressInput] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("cod")
   const dispatch = useDispatch();
 
   // Drag marker -> update lat/lng + address
@@ -154,6 +158,33 @@ const Checkout = () => {
               </MapContainer>
             </div>
           </div>
+        </section>
+
+        {/* Payment Section */}
+        <section>
+          <h2 className="text-lg font-semibold mb-3 text-gray-800">Payment Menthod</h2>
+
+         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+         
+          <div onClick={()=> setPaymentMethod("cod")} className={`flex items-center gap-3 rounded-xl border p-4 text-left transition ${paymentMethod === "cod" ? "border-[#ff4d2d] bg-orange-50 shadow": "border-gray-200 hover:border-x-gray-300"}`}>
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-green-100"><MdDeliveryDining className="text-green-600 text-xl" /></span>
+            <div className="">
+              <p className="font-medium text-gray-800">Cash On delivery</p>
+              <p className=" text-xs text-gray-500">pay when your food arrives</p>
+            </div>
+          </div>
+
+          <div onClick={()=> setPaymentMethod("online")} className={`flex items-center gap-3 rounded-xl border p-4 text-left transition ${paymentMethod === "online" ? "border-[#ff4d2d] bg-orange-50 shadow": "border-gray-200 hover:border-x-gray-300"}`}>
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-purple-100"><FaMobileAlt className="text-purple-700 text-lg" /></span>
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-100"><FaRegCreditCard className="text-blue-700 text-lg" /></span>
+            <div>
+              <p className="font-medium text-gray-800">UPI / Credit / Debit Card</p>
+              <p className="text-xs text-gray-500">Pay Securely Online</p>
+            </div>
+          </div>
+           
+         </div>
+
         </section>
       </div>
     </div>
