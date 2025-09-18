@@ -27,9 +27,15 @@ const Checkout = () => {
   const navigate = useNavigate();
   const API_KEY = import.meta.env.VITE_GEOPIFY_API_KEY;
   const { location, address } = useSelector((state) => state.mapSlice);
+  const { cartItems } = useSelector((state) => state.userSlice);
   const [addressInput, setAddressInput] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("cod")
+  const [paymentMethod, setPaymentMethod] = useState("cod");
   const dispatch = useDispatch();
+
+  const totalPrice = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
 
   // Drag marker -> update lat/lng + address
   const onDragEnd = (e) => {
@@ -92,7 +98,7 @@ const Checkout = () => {
     <div className="min-h-screen bg-[#fff9f6] flex items-center justify-center p-6 relative">
       {/* Back Button */}
       <button
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/cart")}
         className="absolute top-6 left-6 flex items-center gap-2
           text-orange-600 font-medium hover:text-orange-700 transition-all"
       >
@@ -129,7 +135,7 @@ const Checkout = () => {
               <IoIosSearch size={17} />
             </button>
             <button
-              onClick={getCurrentLocation} // ✅ Added Function
+              onClick={getCurrentLocation}
               className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg 
                 flex items-center justify-center shadow-md transition-all"
             >
@@ -154,7 +160,7 @@ const Checkout = () => {
                   draggable
                   eventHandlers={{ dragend: onDragEnd }}
                   position={[location?.lat, location?.lon]}
-                ></Marker>
+                />
               </MapContainer>
             </div>
           </div>
@@ -162,29 +168,114 @@ const Checkout = () => {
 
         {/* Payment Section */}
         <section>
-          <h2 className="text-lg font-semibold mb-3 text-gray-800">Payment Menthod</h2>
+          <h2 className="text-lg font-semibold mb-3 text-gray-800">
+            Payment Method
+          </h2>
 
-         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-         
-          <div onClick={()=> setPaymentMethod("cod")} className={`flex items-center gap-3 rounded-xl border p-4 text-left transition ${paymentMethod === "cod" ? "border-[#ff4d2d] bg-orange-50 shadow": "border-gray-200 hover:border-x-gray-300"}`}>
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-green-100"><MdDeliveryDining className="text-green-600 text-xl" /></span>
-            <div className="">
-              <p className="font-medium text-gray-800">Cash On delivery</p>
-              <p className=" text-xs text-gray-500">pay when your food arrives</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div
+              onClick={() => setPaymentMethod("cod")}
+              className={`flex items-center gap-3 rounded-xl border p-4 text-left transition ${
+                paymentMethod === "cod"
+                  ? "border-[#ff4d2d] bg-orange-50 shadow"
+                  : "border-gray-200 hover:border-x-gray-300"
+              }`}
+            >
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
+                <MdDeliveryDining className="text-green-600 text-xl" />
+              </span>
+              <div>
+                <p className="font-medium text-gray-800">Cash On Delivery</p>
+                <p className="text-xs text-gray-500">
+                  Pay when your food arrives
+                </p>
+              </div>
+            </div>
+
+            <div
+              onClick={() => setPaymentMethod("online")}
+              className={`flex items-center gap-3 rounded-xl border p-4 text-left transition ${
+                paymentMethod === "online"
+                  ? "border-[#ff4d2d] bg-orange-50 shadow"
+                  : "border-gray-200 hover:border-x-gray-300"
+              }`}
+            >
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
+                <FaMobileAlt className="text-purple-700 text-lg" />
+              </span>
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+                <FaRegCreditCard className="text-blue-700 text-lg" />
+              </span>
+              <div>
+                <p className="font-medium text-gray-800">
+                  UPI / Credit / Debit Card
+                </p>
+                <p className="text-xs text-gray-500">Pay Securely Online</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Order Summary */}
+        <section>
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">
+            Order Summary
+          </h2>
+
+          {/* Items List */}
+          <div className="rounded-2xl border bg-white shadow-sm divide-y">
+            {cartItems.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center justify-between p-4"
+              >
+                {/* Item Info */}
+                <div className="flex items-center gap-3">
+                  {/* Placeholder image (or use item.image if available) */}
+
+                  <div>
+                    <p className="font-medium text-gray-800">{item.name}</p>
+                    <p className="text-xs text-gray-500">
+                      Qty: {item.quantity}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Price */}
+                <span className="font-semibold text-gray-800">
+                  ₹{item.price * item.quantity}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Price Details */}
+          <div className="mt-4 rounded-2xl border bg-gray-50 p-4 space-y-3 shadow-inner">
+            <div className="flex justify-between text-sm text-gray-600">
+              <span>Subtotal</span>
+              <span>₹{totalPrice}</span>
+            </div>
+            <div className="flex justify-between text-sm text-gray-600">
+              <span>Delivery Fee</span>
+              <span className="text-green-600">Free</span>
+            </div>
+            <div className="flex justify-between text-base font-bold text-gray-900 pt-2 border-t">
+              <span>Total</span>
+              <span>₹{totalPrice}</span>
             </div>
           </div>
 
-          <div onClick={()=> setPaymentMethod("online")} className={`flex items-center gap-3 rounded-xl border p-4 text-left transition ${paymentMethod === "online" ? "border-[#ff4d2d] bg-orange-50 shadow": "border-gray-200 hover:border-x-gray-300"}`}>
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-purple-100"><FaMobileAlt className="text-purple-700 text-lg" /></span>
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-100"><FaRegCreditCard className="text-blue-700 text-lg" /></span>
-            <div>
-              <p className="font-medium text-gray-800">UPI / Credit / Debit Card</p>
-              <p className="text-xs text-gray-500">Pay Securely Online</p>
-            </div>
+          {/* Place Order Button */}
+          <div className="mt-6">
+            <button
+              onClick={() => alert("Order Placed! 🎉")}
+              className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 
+                 hover:brightness-110 active:scale-95 transition-all
+                 text-white py-3.5 rounded-2xl font-semibold text-lg shadow-lg"
+            >
+              {paymentMethod == "cod" ? "Place Order": "Pay & Place Order"}
+            </button>
           </div>
-           
-         </div>
-
         </section>
       </div>
     </div>
