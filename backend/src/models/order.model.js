@@ -46,7 +46,7 @@ const orderSchema = new mongoose.Schema(
       longitude: Number,
     },
     totalAmount: Number,
-    shopOrder: [shopOrderSchema],
+    shopOrders: [shopOrderSchema],
   },
   { timestamps: true }
 );

@@ -1,8 +1,9 @@
+import Order from "../models/order.model.js";
 import Shop from "../models/shop.model.js";
 
 export const placeOrder = async (req, res) => {
   try {
-    const { cartItems, paymentMethod, deliveryAddress } = req.body;
+    const { cartItems, paymentMethod, deliveryAddress, totalAmount } = req.body;
 
     if (cartItems.length == 0 || !cartItems) {
       return res.status(400).json({ message: "cart is empty" });
@@ -54,7 +55,17 @@ export const placeOrder = async (req, res) => {
         };
       })
     );
+
+    const newOrder = await Order.create({
+      user: req.user,
+      paymentMethod,
+      deliveryAddress,
+      totalAmount,
+      shopOrders,
+    });
+
+    return res.status(201).json(newOrder);
   } catch (error) {
-    res.status(500).json(error)
+    res.status(500).json(error);
   }
 };
