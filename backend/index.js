@@ -10,6 +10,7 @@ import authRoute from "./src/routes/auth.routes.js"
 import userRoute from "./src/routes/user.routes.js"
 import shopRoute from "./src/routes/shop.routes.js"
 import itemRoute from "./src/routes/item.routes.js"
+import orderRoute from "./src/routes/order.routes.js"
 
 const app = express();
 config();
@@ -28,6 +29,7 @@ app.use("/api/auth", authRoute)
 app.use("/api/user", userRoute)
 app.use("/api/shop", shopRoute)
 app.use("/api/item", itemRoute)
+app.use("/api/order", orderRoute)
 
 const port = process.env.PORT || 5000
 
