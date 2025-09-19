@@ -12,6 +12,7 @@ import "leaflet/dist/leaflet.css";
 import { setLocation, setUserAddress } from "../redux/mapSlice";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { serverUrl } from "../App";
 
 const RecenterMap = ({ location }) => {
   const map = useMap();
@@ -89,6 +90,24 @@ const Checkout = () => {
       alert("Geolocation is not supported by this browser.");
     }
   };
+
+  const handlePlaceOrder = async ()=>{
+  try {
+    const res = await axios.post(`${serverUrl}/api/order/place-order`,{
+      paymentMethod,
+      deliveryAddress:{
+        text: addressInput,
+        latitude: location.lat,
+        longitude: location.lon
+      },
+      totalAmount : totalPrice,
+      cartItems
+    },{withCredentials:true})
+    console.log(res.data)
+  } catch (error) {
+    console.log(error)
+  }
+  }
 
   useEffect(() => {
     setAddressInput(address);
@@ -268,7 +287,7 @@ const Checkout = () => {
           {/* Place Order Button */}
           <div className="mt-6">
             <button
-              onClick={() => alert("Order Placed! 🎉")}
+              onClick={handlePlaceOrder}
               className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 
                  hover:brightness-110 active:scale-95 transition-all
                  text-white py-3.5 rounded-2xl font-semibold text-lg shadow-lg"

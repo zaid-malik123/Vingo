@@ -4,7 +4,6 @@ import Shop from "../models/shop.model.js";
 export const placeOrder = async (req, res) => {
   try {
     const { cartItems, paymentMethod, deliveryAddress, totalAmount } = req.body;
-
     if (cartItems.length == 0 || !cartItems) {
       return res.status(400).json({ message: "cart is empty" });
     }
@@ -37,11 +36,15 @@ export const placeOrder = async (req, res) => {
         if (!shop) {
           return res.status(400).json({ message: "shop not found" });
         }
+
         const items = groupItemsByShop[shopId];
+
+        // ✅ Correct subtotal calculation
         const subtotal = items.reduce(
-          (sum, i) => sum + Number(price * i) * Number(i.quantity),
+          (sum, i) => sum + Number(i.price) * Number(i.quantity),
           0
         );
+
         return {
           shop: shop._id,
           owner: shop.owner._id,
@@ -57,7 +60,7 @@ export const placeOrder = async (req, res) => {
     );
 
     const newOrder = await Order.create({
-      user: req.user,
+      user: req.userId,
       paymentMethod,
       deliveryAddress,
       totalAmount,
