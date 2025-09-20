@@ -26,12 +26,12 @@ const OrderPlaced = () => {
       <div className="flex gap-4">
         <button
           onClick={() => navigate("/")}
-          className="px-6 py-3 rounded-2xl bg-green-600 text-white font-semibold shadow hover:bg-green-700 transition"
+          className="px-6 py-3 rounded-2xl bg-[#ff4d2d] hover:bg-orange-700 text-white font-semibold shadow  transition"
         >
           Go to Home
         </button>
         <button
-          onClick={() => navigate("/orders")}
+          onClick={() => navigate("/my-orders")}
           className="px-6 py-3 rounded-2xl border border-gray-300 text-gray-700 font-medium shadow hover:bg-gray-100 transition"
         >
           View Orders

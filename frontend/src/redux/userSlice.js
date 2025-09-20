@@ -8,6 +8,7 @@ const initialState = {
   shopsInMyCity: null,
   itemsInMyCity: null,
   cartItems: [],
+  myOrders: null
 };
 
 export const userSlice = createSlice({
@@ -65,6 +66,10 @@ export const userSlice = createSlice({
       const itemId = action.payload;
       state.cartItems = state.cartItems.filter((i) => i.id !== itemId);
     },
+
+    setMyOrders: (state, action)=>{
+     state.myOrders = action.payload
+    }
   },
 });
 
@@ -78,6 +83,7 @@ export const {
   addToCart,
   decreaseQuantity,
   removeFromCart,
+  setMyOrders,
 } = userSlice.actions;
 
 export default userSlice.reducer;

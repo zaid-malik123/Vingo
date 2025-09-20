@@ -1,10 +1,13 @@
 import express from "express"
 import { isAuth } from "../middleware/isAuth.js";
-import { placeOrder } from "../controllers/order.controller.js";
+import {   getMyOrders, placeOrder } from "../controllers/order.controller.js";
 
 const router = express.Router();
 
 router.post("/place-order", isAuth, placeOrder)
+
+router.get("/my-orders", isAuth, getMyOrders)
+
 
 
 export default router;
