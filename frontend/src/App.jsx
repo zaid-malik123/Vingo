@@ -16,6 +16,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderPlaced from "./pages/OrderPlaced";
 import MyOrder from "./pages/MyOrder";
+import useGetMyOrders from "./hooks/useGetMyOrders";
 
 export const serverUrl = "http://localhost:3000";
 
@@ -25,6 +26,7 @@ const App = () => {
   useGetCurrentCity();
   useGetShopByCity();
   useGetItemsByCity();
+  useGetMyOrders()
   useGetMyShop();
 
   return (

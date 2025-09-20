@@ -76,25 +76,40 @@ export const placeOrder = async (req, res) => {
 
 export const getMyOrders = async (req, res) => {
   try {
+    if (!req.userId) {
+      return res.status(401).json({ message: "Unauthorized: no userId" });
+    }
+
     const user = await User.findById(req.userId);
-    if (user.role == "user") {
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.role === "user") {
       const orders = await Order.find({ user: req.userId })
         .sort({ createdAt: -1 })
-        .populate("shopOrders.shop ", "name")
+        .populate("shopOrders.shop", "name")
         .populate("shopOrders.owner", "name email mobileNo")
         .populate("shopOrders.shopOrderItems.item", "name image price");
 
-      res.status(200).json(orders);
-    } else if (user.role == "owner") {
+      return res.status(200).json({ orders });
+    }
+
+    if (user.role === "owner") {
       const orders = await Order.find({ "shopOrders.owner": req.userId })
         .sort({ createdAt: -1 })
-        .populate("shopOrders.shop ", "name")
+        .populate("shopOrders.shop", "name")
         .populate("user")
         .populate("shopOrders.shopOrderItems.item", "name image price");
-      res.status(200).json(orders);
+
+      return res.status(200).json({ orders });
     }
+
+    res.status(400).json({ message: "Invalid role" });
   } catch (error) {
-    res.status(500).json(error);
+    console.error("getMyOrders error:", error);
+    res.status(500).json({ message: error.message });
   }
 };
+
 
