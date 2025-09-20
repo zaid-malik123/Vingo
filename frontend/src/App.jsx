@@ -14,6 +14,7 @@ import useGetShopByCity from "./hooks/useGetShopByCity";
 import useGetItemsByCity from "./hooks/useGetItemsByCity";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import OrderPlaced from "./pages/OrderPlaced";
 
 export const serverUrl = "http://localhost:3000";
 
@@ -66,6 +67,10 @@ const App = () => {
         <Route
           path="/checkout"
           element={user ? <Checkout/> : <Navigate to={"/login"} />}
+        ></Route>
+        <Route
+          path="/order-placed"
+          element={user ? <OrderPlaced/> : <Navigate to={"/login"} />}
         ></Route>
       </Routes>
     </div>

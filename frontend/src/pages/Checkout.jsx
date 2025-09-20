@@ -104,6 +104,7 @@ const Checkout = () => {
       cartItems
     },{withCredentials:true})
     console.log(res.data)
+    navigate("/order-placed")
   } catch (error) {
     console.log(error)
   }
