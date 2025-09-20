@@ -108,8 +108,8 @@ const Nav = () => {
 
             {/* Orders */}
             <div className="relative flex items-center gap-2 px-3 py-2 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium cursor-pointer hover:bg-[#ff4d2d]/20 transition">
-              <IoReceiptOutline size={20} />
-              <span className="hidden md:block text-sm">Pending Orders</span>
+              <IoReceiptOutline onClick={()=> navigate("/my-orders")} size={20} />
+              <span onClick={()=> navigate("/my-orders")} className="hidden md:block text-sm">Pending Orders</span>
               <span className="absolute -right-2 -top-2 text-xs font-bold text-white bg-[#ff4d2d] rounded-full px-[6px] py-[1px]">
                 0
               </span>
@@ -118,7 +118,7 @@ const Nav = () => {
         ) : (
           /* User Controls */
           <>
-            <button className="hidden md:block px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] text-sm font-medium hover:bg-[#ff4d2d]/20 transition">
+            <button onClick={()=> navigate("/my-orders")} className="hidden md:block px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] text-sm font-medium hover:bg-[#ff4d2d]/20 transition">
               My Orders
             </button>
             <div onClick={()=> navigate("/cart")} className="relative cursor-pointer">
@@ -143,7 +143,7 @@ const Nav = () => {
           <div className="fixed top-[80px] right-[10px] md:right-[10%] lg:right-[25%] w-[200px] bg-white shadow-2xl rounded-xl p-4 flex flex-col gap-3 z-[999]">
             <div className="text-[16px] font-semibold">{user?.fullName}</div>
             {user?.role === "user" && (
-              <div className="md:hidden text-[#ff4d2d] font-semibold cursor-pointer">
+              <div onClick={()=> navigate("/my-orders")} className="md:hidden text-[#ff4d2d] font-semibold cursor-pointer">
                 My Orders
               </div>
             )}
