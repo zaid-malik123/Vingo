@@ -1,6 +1,17 @@
 import { FaPhoneAlt } from "react-icons/fa";
+import axios from "axios"
+import { serverUrl } from "../App";
 
 const OwnerOrderCard = ({ order }) => {
+
+  const handleUpdateStatus = async (orderId, shopId, status)=>{
+    try {
+      const res = await axios.post(`${serverUrl}/api/order/update-status/${orderId}/${shopId}`, {status},{withCredentials:true})
+      console.log(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
     <div className="bg-white rounded-2xl shadow-md p-5 space-y-5 border border-gray-100 hover:shadow-lg transition">
       
@@ -56,9 +67,11 @@ const OwnerOrderCard = ({ order }) => {
           </span>
         </span>
         <select
+          onChange={(e)=> handleUpdateStatus(order._id, order.shopOrders.shop._id, e.target.value)}
           className="rounded-lg border px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#ff4d2d] border-[#ff4d2d] text-[#ff4d2d] bg-white"
-          value={order.shopOrders.status}
-        >
+      
+        > 
+          <option value="">Change</option> 
           <option value="pending">Pending</option>
           <option value="preparing">Preparing</option>
           <option value="out of delivery">Out of delivery</option>
