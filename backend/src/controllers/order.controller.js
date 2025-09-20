@@ -66,7 +66,9 @@ export const placeOrder = async (req, res) => {
       deliveryAddress,
       totalAmount,
       shopOrders,
-    });
+    })
+
+    await newOrder.populate("shopOrders.shopOrderItems.item", "name image price")
 
     return res.status(201).json(newOrder);
   } catch (error) {

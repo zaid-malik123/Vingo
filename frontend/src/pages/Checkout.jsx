@@ -13,6 +13,7 @@ import { setLocation, setUserAddress } from "../redux/mapSlice";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { serverUrl } from "../App";
+import { addMyOrder } from "../redux/userSlice";
 
 const RecenterMap = ({ location }) => {
   const map = useMap();
@@ -103,7 +104,7 @@ const Checkout = () => {
       totalAmount : totalPrice,
       cartItems
     },{withCredentials:true})
-    console.log(res.data)
+    dispatch(addMyOrder(res.data))
     navigate("/order-placed")
   } catch (error) {
     console.log(error)
