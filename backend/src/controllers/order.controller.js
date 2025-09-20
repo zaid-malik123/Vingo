@@ -92,7 +92,7 @@ export const getMyOrders = async (req, res) => {
         .populate("shopOrders.owner", "name email mobileNo")
         .populate("shopOrders.shopOrderItems.item", "name image price");
 
-      return res.status(200).json({ orders });
+      return res.status(200).json( orders );
     }
 
     if (user.role === "owner") {
@@ -102,7 +102,15 @@ export const getMyOrders = async (req, res) => {
         .populate("user")
         .populate("shopOrders.shopOrderItems.item", "name image price");
 
-      return res.status(200).json({ orders });
+        const filterOrders = orders.map((order)=>({
+          _id: order._id,
+          paymentMethod: order.paymentMethod,
+          user: order.user,
+          shopOrders: order.shopOrders.find(o=> o.owner._id == req.userId),
+          createdAt: order.createdAt,
+          deliveryAddress: order.deliveryAddress
+        }))
+      return res.status(200).json( filterOrders );
     }
 
     res.status(400).json({ message: "Invalid role" });
