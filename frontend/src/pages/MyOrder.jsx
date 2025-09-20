@@ -1,6 +1,4 @@
-import React from "react";
 import { useSelector } from "react-redux";
-import { userSlice } from "../redux/userSlice";
 import UserOrderCard from "../component/UserOrderCard";
 import OwnerOrderCard from "../component/OwnerOrderCard";
 import { useNavigate } from "react-router-dom";
