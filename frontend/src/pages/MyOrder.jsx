@@ -1,21 +1,49 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
-import { userSlice } from '../redux/userSlice'
-import UserOrderCard from '../component/UserOrderCard';
-import OwnerOrderCard from '../component/OwnerOrderCard';
+import React from "react";
+import { useSelector } from "react-redux";
+import { userSlice } from "../redux/userSlice";
+import UserOrderCard from "../component/UserOrderCard";
+import OwnerOrderCard from "../component/OwnerOrderCard";
+import { useNavigate } from "react-router-dom";
+import { IoArrowBackOutline } from "react-icons/io5";
 
 const MyOrder = () => {
-   const { user, myOrders } = useSelector((state) => state.userSlice); 
-  return (
-    <div>
-     {user.role === "user" && (
-        <UserOrderCard/>
-     )}
-     {user.role === "owner" && (
-        <OwnerOrderCard/>
-     )}
-    </div>
-  )
-}
+  const { user, myOrders } = useSelector((state) => state.userSlice);
+  const navigate = useNavigate();
 
-export default MyOrder
+  return (
+    <div className="w-full min-h-screen bg-[#fff9f6] flex justify-center px-4">
+      <div className="w-full max-w-[800px] p-4">
+        {/* Top bar with back button + heading */}
+        <div className="flex items-center justify-between mb-8">
+          <button
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2 text-orange-600 font-medium hover:text-orange-700 transition"
+          >
+            <IoArrowBackOutline size={22} />
+            Back
+          </button>
+
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center flex-1">
+            My Orders
+          </h1>
+
+          {/* Empty div to balance flex so heading stays center */}
+          <div className="w-[60px]"></div>
+        </div>
+
+        <div className="space-y-6">
+          {myOrders?.map((order, idx) => (
+            <div key={order._id || idx}>
+              {user.role === "user" && <UserOrderCard order={order} />}
+              {user.role === "owner" && <OwnerOrderCard order={order} />}
+            </div>
+          ))}
+        </div>
+
+        {/* Role-based order cards */}
+      </div>
+    </div>
+  );
+};
+
+export default MyOrder;
