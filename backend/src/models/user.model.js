@@ -28,14 +28,26 @@ const userSchema = mongoose.Schema(
     },
     isOtpVerified: {
       type: Boolean,
-      default: false
+      default: false,
     },
     otpExpires: {
-      type: Date
+      type: Date,
+    },
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        default: "Point",
+      },
+      cordinates: {
+        type: [Number],
+        default: [0, 0],
+      },
     },
   },
   { timestamps: true }
 );
+userSchema.index({location: "2dsphere"})
 
 const User = mongoose.model("User", userSchema);
 export default User;
