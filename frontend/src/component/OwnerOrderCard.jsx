@@ -1,22 +1,30 @@
 import { FaPhoneAlt } from "react-icons/fa";
-import axios from "axios"
+import axios from "axios";
 import { serverUrl } from "../App";
 import { useDispatch } from "react-redux";
 import { updateOrderStatus } from "../redux/userSlice";
+import { useState } from "react";
 
 const OwnerOrderCard = ({ order }) => {
-  const dispatch = useDispatch() 
-  const handleUpdateStatus = async (orderId, shopId, status)=>{
+  const dispatch = useDispatch();
+  const [deliveryBoys, setDeliveryBoys] = useState([]);
+  const handleUpdateStatus = async (orderId, shopId, status) => {
     try {
-      const res = await axios.post(`${serverUrl}/api/order/update-status/${orderId}/${shopId}`, {status},{withCredentials:true})
-      dispatch(updateOrderStatus({orderId, shopId,status}))
+      const res = await axios.post(
+        `${serverUrl}/api/order/update-status/${orderId}/${shopId}`,
+        { status },
+        { withCredentials: true }
+      );
+      console.log(res.data);
+      setDeliveryBoys(res.data.availableBoys);
+      dispatch(updateOrderStatus({ orderId, shopId, status }));
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
+  console.log("this is available delivery boys -- >", deliveryBoys);
   return (
     <div className="bg-white rounded-2xl shadow-md p-5 space-y-5 border border-gray-100 hover:shadow-lg transition">
-      
       {/* User Info */}
       <div className="space-y-1">
         <h2 className="text-lg font-semibold text-gray-800">
@@ -69,16 +77,37 @@ const OwnerOrderCard = ({ order }) => {
           </span>
         </span>
         <select
-          onChange={(e)=> handleUpdateStatus(order._id, order.shopOrders.shop._id, e.target.value)}
+          onChange={(e) =>
+            handleUpdateStatus(
+              order._id,
+              order.shopOrders.shop._id,
+              e.target.value
+            )
+          }
           className="rounded-lg border px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#ff4d2d] border-[#ff4d2d] text-[#ff4d2d] bg-white"
-      
-        > 
-          <option value="">Change</option> 
+        >
+          <option value="">Change</option>
           <option value="pending">Pending</option>
           <option value="preparing">Preparing</option>
           <option value="out of delivery">Out of delivery</option>
         </select>
       </div>
+
+      {(order.shopOrders.status === "out of delivery" ||
+        deliveryBoys.length > 0) && (
+        <div className="mt-3 p-2 border rounded-lg text-sm bg-orange-50">
+          <p>Available delivery Boys :</p>
+          {deliveryBoys?.length > 0 ? (
+            deliveryBoys.map((b, idx) => (
+              <div key={idx}>
+                {b.fullName} - {b.mobileNo}
+              </div>
+            ))
+          ) : (
+            <div>Waiting for delivery Boys to accept</div>
+          )}
+        </div>
+      )}
 
       {/* Total */}
       <div className="text-right font-semibold text-gray-800">
