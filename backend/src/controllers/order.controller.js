@@ -224,28 +224,32 @@ export const updateOrderStatus = async (req, res) => {
   }
 };
 
-export const getAssigment = async (req, res)=>{
+export const getAssigment = async (req, res) => {
   try {
-    const deliveryBoyId = req.userId
+    const deliveryBoyId = req.userId;
     const assignments = await DeliveryAssignment.find({
       broadcastedTo: deliveryBoyId,
-      status: "broadcasted"
+      status: "broadcasted",
     })
-    .populate("order")
-    .populate("shop")
-   
-    const formatted = assignments.map(a=> ({
-      assignmentId: a._id,
-      orderId: a.order._id,
-      shopName: a.shop.name,
-      deliveryAddress: a.order.deliveryAddress,
-      items: a.order.shopOrders.find(s=> s._id == a.shopOrderId).shopOrderItems || [],
-      subtotal: a.order.shopOrders.find(s=> s._id == a.shopOrderId)?.subtotal, 
-    }))
+      .populate("order")
+      .populate("shop");
+    const formatted = assignments.map((a) => {
+      const shopOrder = a.order.shopOrders.find(
+        (s) => s._id.toString() === a.shopOrderId.toString()
+      );
 
-    return res.status(200).json(formatted)
+      return {
+        assignmentId: a._id,
+        orderId: a.order._id,
+        shopName: a.shop.name,
+        deliveryAddress: a.order.deliveryAddress,
+        items: shopOrder?.shopOrderItems || [],
+        subtotal: shopOrder?.subtotal || 0,
+      };
+    });
 
+    return res.status(200).json(formatted);
   } catch (error) {
-     res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
-}
+};

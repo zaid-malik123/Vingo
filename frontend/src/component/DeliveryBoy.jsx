@@ -1,8 +1,24 @@
 import { useSelector } from 'react-redux';
 import Nav from './Nav'
+import axios from 'axios';
+import { serverUrl } from '../App';
+import { useEffect } from 'react';
 
 const DeliveryBoy = () => {
   const { user } = useSelector((state) => state.userSlice);
+
+  const handleGetAssignment = async ()=>{
+  try {
+    const res = await axios.get(`${serverUrl}/api/order/get-assignments`,{withCredentials:true})
+    console.log(res.data)
+  } catch (error) {
+    console.log(error)
+  }
+  }
+  
+  useEffect(()=>{
+    handleGetAssignment()
+  },[user])
   return (
     <div className="w-full min-h-screen bg-[#fff9f6] flex flex-col items-center overflow-y-auto">
       <Nav/>

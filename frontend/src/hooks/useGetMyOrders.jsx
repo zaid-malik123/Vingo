@@ -12,7 +12,6 @@ const useGetMyOrders = () => {
   const fetchOrders = async () => {
     try {
       const res = await axios.get(`${serverUrl}/api/order/my-orders`, { withCredentials: true });
-      console.log(res.data)
       dispatch(setMyOrders(res.data));
     } catch (error) {
       console.log("get-my error:", error);

@@ -18,7 +18,6 @@ const useGetCurrentCity = () => {
         async (position) => {
           const lon = position.coords.longitude;
           const lat = position.coords.latitude;
-          console.log("longitude is --> ", lon , "latitude is --> ", lat)
           const API_KEY = import.meta.env.VITE_GEOPIFY_API_KEY;
           dispatch(setLocation({lat: lat, lon: lon}))
 

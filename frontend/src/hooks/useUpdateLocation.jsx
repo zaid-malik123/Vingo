@@ -10,7 +10,6 @@ const useUpdateLocation = () => {
   useEffect(() => {
     const updateLocation = async (lat, lon)=>{
         const res = await axios.post(`${serverUrl}/api/user/update-location`,{lat,lon},{withCredentials:true})
-        console.log(res.data)
     }
     
     navigator.geolocation.watchPosition((pos)=>{
