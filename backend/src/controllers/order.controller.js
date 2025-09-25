@@ -254,49 +254,57 @@ export const getAssigment = async (req, res) => {
   }
 };
 
-export const acceptAssingment = async (req, res)=>{
-try {
-  const {id} = req.params
+export const acceptAssingment = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-  const deliveryAssignment = await DeliveryAssignment.findById(id)
+    const deliveryAssignment = await DeliveryAssignment.findById(id);
 
-  if(!deliveryAssignment){
-    return res.status(400).json({message: "Assignment not found"})
+    if (!deliveryAssignment) {
+      return res.status(400).json({ message: "Assignment not found" });
+    }
+
+    if (deliveryAssignment.status !== "broadcasted") {
+      return res.status(400).json({ message: "Assignment not expired" });
+    }
+
+    const alreadyAssigned = await DeliveryAssignment.findOne({
+      assignTo: req.userId,
+      status: { $in: ["broadcasted", "completed"] },
+    });
+
+    if (alreadyAssigned) {
+      return res
+        .status(400)
+        .json({ message: "Assignment is already assigned to another user" });
+    }
+
+    deliveryAssignment.assignTo = req.userId;
+    deliveryAssignment.status = "assigned";
+    deliveryAssignment.acceptedAt = new Date();
+    await deliveryAssignment.save();
+
+    const order = await Order.findById(deliveryAssignment.order);
+
+    if (!order) {
+      return res.status(400).json({ message: "order not found" });
+    }
+
+    const shopOrder = order.shopOrders.find(
+      (so) => so._id.equals(deliveryAssignment.shopOrderId) // safer than '=='
+    );
+
+    if (!shopOrder) {
+      return res.status(400).json({ message: "Shop order not found" });
+    }
+
+    shopOrder.assignedDeliveryBoy = req.userId;
+    await order.save();
+
+    res.status(200).json({
+      message: "order Accepted",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-  
-  if(deliveryAssignment.status !== "broadcasted"){
-    return res.status(400).json({message: "Assignment not expired"})
-  }
-
-  const alreadyAssigned = await DeliveryAssignment.findOne({
-    assignTo: req.userId, 
-    status: { $in: ["broadcasted", "completed"] },
-  })
-
-  if(alreadyAssigned){
-    return res.status(400).json({message: "Assignment is already assigned to another user"})
-  }
-
-  deliveryAssignment.assignTo = req.userId
-  deliveryAssignment.status = "assigned"
-  deliveryAssignment.acceptedAt = new Date()
-  await deliveryAssignment.save()
-
-  const order = await Order.findById(deliveryAssignment.order)
-
-  if(!order){
-    return res.status(400).json({message: "order not found"})
-  }
-
-  const shopOrder = order.shopOrders.find(so => so._id == deliveryAssignment.shopOrderId)
-  shopOrder.assignedDeliveryBoy = req.userId
-  await order.save()
-
-  res.status(200).json({
-    message: "order Accepted"
-  })
-
-} catch (error) {
-  res.status(500).json({ message: error.message });
-}
-}
+};

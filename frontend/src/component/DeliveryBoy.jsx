@@ -8,7 +8,6 @@ import { FaStore, FaMapMarkerAlt, FaBox } from "react-icons/fa";
 const DeliveryBoy = () => {
   const { user } = useSelector((state) => state.userSlice);
   const [availableAssignment, setAvailableAssignment] = useState([]);
-  console.log(availableAssignment);
 
   const handleGetAssignment = async () => {
     try {
@@ -20,6 +19,17 @@ const DeliveryBoy = () => {
       console.log(error);
     }
   };
+
+  const handleAcceptAssignment = async (assignmentId)=>{
+    try {
+      const res = await axios.get(`${serverUrl}/api/order/accept-order/${assignmentId}`, {
+        withCredentials: true,
+      });
+      console.log(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
     handleGetAssignment();
@@ -68,7 +78,7 @@ const DeliveryBoy = () => {
                       {a.items.length} items | ₹{a.subtotal}
                     </p>
                   </div>
-                  <button className="bg-[#ff4d2d] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#e8432b] transition">
+                  <button onClick={()=> handleAcceptAssignment(a.assignmentId)} className="bg-[#ff4d2d] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#e8432b] transition">
                     Accept
                   </button>
                 </div>
