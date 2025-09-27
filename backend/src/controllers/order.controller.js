@@ -324,7 +324,6 @@ export const getCurrentOrder = async (req, res) => {
           { path: "user", select: "fullName email location mobileNo" },
         ],
       });
-
     if (!assignment) {
       return res.status(400).json({ message: "assignment not found" });
     }
@@ -341,7 +340,7 @@ export const getCurrentOrder = async (req, res) => {
     }
 
     let deliveryBoyLocation = { lat: null, lon: null };
-    if (assignment.assignTo.location.coordinates == 2) {
+    if (assignment.assignTo.location.coordinates.length == 2) {
       deliveryBoyLocation.lat = assignment.assignTo.location.coordinates[1];
       deliveryBoyLocation.lon = assignment.assignTo.location.coordinates[0];
     }

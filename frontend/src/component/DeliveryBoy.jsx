@@ -8,6 +8,7 @@ import { FaStore, FaMapMarkerAlt, FaBox } from "react-icons/fa";
 const DeliveryBoy = () => {
   const { user } = useSelector((state) => state.userSlice);
   const [availableAssignment, setAvailableAssignment] = useState([]);
+  const [currentOrder, setCurrentOrder] = useState()
 
   const handleGetAssignment = async () => {
     try {
@@ -26,13 +27,26 @@ const DeliveryBoy = () => {
         withCredentials: true,
       });
       console.log(res.data)
+      await handleGetCurrentOrder()
     } catch (error) {
       console.log(error)
     }
   }
 
+  const handleGetCurrentOrder = async () => {
+    try {
+      const res = await axios.get(`${serverUrl}/api/order/current-order`, {
+        withCredentials: true,
+      });
+      setCurrentOrder(res.data)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     handleGetAssignment();
+    handleGetCurrentOrder()
   }, [user]);
 
   return (
