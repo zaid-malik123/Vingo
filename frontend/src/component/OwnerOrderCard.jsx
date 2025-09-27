@@ -5,9 +5,16 @@ import { useDispatch } from "react-redux";
 import { updateOrderStatus } from "../redux/userSlice";
 import { useState } from "react";
 
+const statusColors = {
+  pending: "bg-gray-100 text-gray-600",
+  preparing: "bg-blue-100 text-blue-600",
+  "out of delivery": "bg-orange-100 text-orange-600",
+};
+
 const OwnerOrderCard = ({ order }) => {
   const dispatch = useDispatch();
   const [deliveryBoys, setDeliveryBoys] = useState([]);
+
   const handleUpdateStatus = async (orderId, shopId, status) => {
     try {
       const res = await axios.post(
@@ -15,26 +22,35 @@ const OwnerOrderCard = ({ order }) => {
         { status },
         { withCredentials: true }
       );
-      console.log(res.data);
-      setDeliveryBoys(res.data.availableBoys);
+      setDeliveryBoys(res.data.availableBoys || []);
       dispatch(updateOrderStatus({ orderId, shopId, status }));
     } catch (error) {
       console.log(error);
     }
   };
-  console.log("this is available delivery boys -- >", deliveryBoys);
+
+  const currentStatus = order?.shopOrders?.status || "pending";
+  const assignedBoy = order?.shopOrders?.assignedDeliveryBoy;
+
   return (
     <div className="bg-white rounded-2xl shadow-md p-5 space-y-5 border border-gray-100 hover:shadow-lg transition">
-      {/* User Info */}
-      <div className="space-y-1">
-        <h2 className="text-lg font-semibold text-gray-800">
-          {order.user.fullName}
-        </h2>
-        <p className="text-sm text-gray-500">{order.user.email}</p>
-        <p className="flex items-center gap-2 text-sm text-gray-600">
-          <FaPhoneAlt className="text-[#ff4d2d]" />
-          {order.user.mobileNo}
-        </p>
+      {/* Header */}
+      <div className="flex justify-between items-start">
+        <div>
+          <h2 className="text-lg font-semibold text-gray-800">
+            {order?.user?.fullName}
+          </h2>
+          <p className="text-sm text-gray-500">{order?.user?.email}</p>
+          <p className="flex items-center gap-2 text-sm text-gray-600 mt-1">
+            <FaPhoneAlt className="text-[#ff4d2d]" />
+            {order?.user?.mobileNo}
+          </p>
+        </div>
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[currentStatus]}`}
+        >
+          {currentStatus}
+        </span>
       </div>
 
       {/* Delivery Address */}
@@ -48,13 +64,13 @@ const OwnerOrderCard = ({ order }) => {
 
       {/* Items */}
       <div className="flex space-x-4 overflow-x-auto pb-2">
-        {order.shopOrders.shopOrderItems.map((item, idx) => (
+        {order?.shopOrders?.shopOrderItems?.map((item, idx) => (
           <div
-            className="flex-shrink-0 w-40 border rounded-xl p-3 bg-white shadow-sm hover:shadow-md transition"
+            className="flex-shrink-0 w-36 border rounded-xl p-3 bg-white shadow-sm hover:shadow-md transition"
             key={idx}
           >
             <img
-              className="w-full h-24 object-cover rounded-lg"
+              className="w-full h-20 object-cover rounded-lg"
               src={item.item.image}
               alt={item.item.name}
             />
@@ -70,17 +86,13 @@ const OwnerOrderCard = ({ order }) => {
 
       {/* Status & Actions */}
       <div className="flex justify-between items-center pt-3 border-t border-gray-100">
-        <span className="text-sm">
-          Status:{" "}
-          <span className="font-semibold capitalize text-[#ff4d2d]">
-            {order.shopOrders.status}
-          </span>
-        </span>
+        <span className="text-sm text-gray-700">Update Status:</span>
         <select
+          value=""
           onChange={(e) =>
             handleUpdateStatus(
-              order._id,
-              order.shopOrders.shop._id,
+              order?._id,
+              order?.shopOrders?.shop?._id,
               e.target.value
             )
           }
@@ -93,25 +105,34 @@ const OwnerOrderCard = ({ order }) => {
         </select>
       </div>
 
-      {(order.shopOrders.status === "out of delivery" ||
-        deliveryBoys.length > 0) && (
-        <div className="mt-3 p-2 border rounded-lg text-sm bg-orange-50">
-          <p>Available delivery Boys :</p>
-          {deliveryBoys?.length > 0 ? (
-            deliveryBoys.map((b, idx) => (
-              <div key={idx}>
-                {b.fullName} - {b.mobileNo}
-              </div>
-            ))
+      {/* Delivery Boys Section */}
+      {(currentStatus === "out of delivery" || deliveryBoys.length > 0) && (
+        <div className="mt-3 p-3 border rounded-lg text-sm bg-orange-50 space-y-2">
+          {assignedBoy ? (
+            <>
+              <p className="font-medium text-gray-700">Assigned Delivery Boy:</p>
+              <p>
+                {assignedBoy.fullName} - {assignedBoy.mobileNo}
+              </p>
+            </>
+          ) : deliveryBoys.length > 0 ? (
+            <>
+              <p className="font-medium text-gray-700">Available Delivery Boys:</p>
+              {deliveryBoys.map((b, idx) => (
+                <p key={idx}>
+                  {b.fullName} - {b.mobileNo}
+                </p>
+              ))}
+            </>
           ) : (
-            <div>Waiting for delivery Boys to accept</div>
+            <p className="text-gray-600">Waiting for delivery boys to accept...</p>
           )}
         </div>
       )}
 
       {/* Total */}
-      <div className="text-right font-semibold text-gray-800">
-        Total: ₹{order.shopOrders.subtotal}
+      <div className="text-right font-semibold text-gray-800 text-lg">
+        Total: ₹{order?.shopOrders?.subtotal}
       </div>
     </div>
   );
