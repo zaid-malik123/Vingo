@@ -16,7 +16,7 @@ router.get("/current-order", isAuth, getCurrentOrder)
 
 router.get("/current-order", isAuth, getOrderById)
 
-router.post("/get-order-by-id/:orderId", isAuth, updateOrderStatus)
+router.get("/get-order-by-id/:orderId", isAuth, getOrderById)
 
 
 export default router;

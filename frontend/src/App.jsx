@@ -79,6 +79,10 @@ const App = () => {
           path="/my-orders"
           element={user ? <MyOrder /> : <Navigate to={"/login"} />}
         ></Route>
+        <Route
+          path="/track-order/:orderId"
+          element={user ? <TrackOrderPage/> : <Navigate to={"/login"} />}
+        ></Route>
       </Routes>
     </div>
   );
