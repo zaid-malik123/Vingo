@@ -18,6 +18,7 @@ import OrderPlaced from "./pages/OrderPlaced";
 import MyOrder from "./pages/MyOrder";
 import useGetMyOrders from "./hooks/useGetMyOrders";
 import useUpdateLocation from "./hooks/useUpdateLocation";
+import TrackOrderPage from "./pages/TrackOrderPage";
 
 export const serverUrl = "http://localhost:3000";
 

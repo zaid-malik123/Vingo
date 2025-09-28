@@ -1,6 +1,6 @@
 import express from "express"
 import { isAuth } from "../middleware/isAuth.js";
-import {   acceptAssingment, getAssigment, getCurrentOrder, getMyOrders, placeOrder, updateOrderStatus } from "../controllers/order.controller.js";
+import {   acceptAssingment, getAssigment, getCurrentOrder, getMyOrders, getOrderById, placeOrder, updateOrderStatus } from "../controllers/order.controller.js";
 
 const router = express.Router();
 
@@ -14,7 +14,9 @@ router.get("/accept-order/:id", isAuth, acceptAssingment)
 
 router.get("/current-order", isAuth, getCurrentOrder)
 
-router.post("/update-status/:orderId/:shopId", isAuth, updateOrderStatus)
+router.get("/current-order", isAuth, getOrderById)
+
+router.post("/get-order-by-id/:orderId", isAuth, updateOrderStatus)
 
 
 export default router;
