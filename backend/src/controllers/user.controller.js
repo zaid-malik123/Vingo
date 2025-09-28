@@ -1,4 +1,5 @@
 import User from "../models/user.model.js"
+
 export const currUser = async (req, res, next)=>{
     try {
        const id = req.userId;
