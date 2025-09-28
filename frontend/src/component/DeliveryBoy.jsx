@@ -10,7 +10,8 @@ const DeliveryBoy = () => {
   const { user } = useSelector((state) => state.userSlice);
   const [availableAssignment, setAvailableAssignment] = useState([]);
   const [currentOrder, setCurrentOrder] = useState();
-  console.log(currentOrder);
+  const [showBox, setShowBox] = useState(false);
+
   const handleGetAssignment = async () => {
     try {
       const res = await axios.get(`${serverUrl}/api/order/get-assignments`, {
@@ -24,13 +25,9 @@ const DeliveryBoy = () => {
 
   const handleAcceptAssignment = async (assignmentId) => {
     try {
-      const res = await axios.get(
-        `${serverUrl}/api/order/accept-order/${assignmentId}`,
-        {
-          withCredentials: true,
-        }
-      );
-      console.log(res.data);
+      await axios.get(`${serverUrl}/api/order/accept-order/${assignmentId}`, {
+        withCredentials: true,
+      });
       await handleGetCurrentOrder();
     } catch (error) {
       console.log(error);
@@ -49,6 +46,14 @@ const DeliveryBoy = () => {
     }
   };
 
+  const handleSendOtp = () => {
+    try {
+      setShowBox(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     handleGetAssignment();
     handleGetCurrentOrder();
@@ -59,7 +64,7 @@ const DeliveryBoy = () => {
       <Nav />
       <div className="w-full max-w-3xl flex flex-col gap-6 items-center px-4 py-6">
         {/* Profile Card */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center w-full border border-orange-100 gap-3">
+        <div className="bg-white rounded-2xl shadow-md p-6 flex flex-col items-center w-full border border-orange-100 gap-3">
           <h1 className="text-2xl font-bold text-[#ff4d2d]">
             Welcome, {user.fullName}
           </h1>
@@ -74,9 +79,9 @@ const DeliveryBoy = () => {
           </p>
         </div>
 
-        {/* Orders Section */}
-        {!currentOrder == null && (
-          <div className="bg-white rounded-2xl p-6 shadow-lg w-full border border-orange-100">
+        {/* Available Orders */}
+        {currentOrder == null && (
+          <div className="bg-white rounded-2xl p-6 shadow-md w-full border border-orange-100">
             <h1 className="text-xl font-bold mb-5 flex items-center gap-2 text-[#ff4d2d]">
               <FaBox /> Available Orders
             </h1>
@@ -85,7 +90,7 @@ const DeliveryBoy = () => {
                 availableAssignment.map((a, i) => (
                   <div
                     key={i}
-                    className="border border-gray-200 rounded-xl p-5 flex justify-between items-start hover:shadow-md transition"
+                    className="border border-gray-200 rounded-xl p-5 flex justify-between items-start hover:shadow-lg transition"
                   >
                     <div className="flex flex-col gap-1">
                       <p className="font-semibold text-gray-800 flex items-center gap-2">
@@ -114,14 +119,16 @@ const DeliveryBoy = () => {
             </div>
           </div>
         )}
+
+        {/* Current Order */}
         {currentOrder && (
-          <div className="bg-white rounded-2xl p-6 shadow-lg w-full border border-orange-100">
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-[#ff4d2d]">
+          <div className="bg-white rounded-2xl p-6 shadow-md w-full border border-orange-100">
+            <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-[#ff4d2d]">
               <FaBox /> Current Order
             </h2>
 
             {/* Shop + Items */}
-            <div className="mb-4">
+            <div className="mb-6">
               <p className="font-semibold text-gray-800 flex items-center gap-2">
                 <FaStore className="text-orange-500" /> Shop Order
               </p>
@@ -141,29 +148,31 @@ const DeliveryBoy = () => {
             </div>
 
             {/* Customer Details */}
-            <div className="mb-4">
-              <h3 className="text-sm font-semibold text-gray-700 mb-1">
+            <div className="mb-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-2">
                 Customer Details
               </h3>
-              <p className="text-gray-800">{currentOrder.user.fullName}</p>
-              <p className="text-gray-600 text-sm">
-                {currentOrder.user.mobileNo}
-              </p>
-              <p className="text-gray-600 text-sm">{currentOrder.user.email}</p>
+              <div className="bg-gray-50 p-3 rounded-lg border text-sm">
+                <p className="text-gray-800 font-medium">
+                  {currentOrder.user.fullName}
+                </p>
+                <p className="text-gray-600">{currentOrder.user.mobileNo}</p>
+                <p className="text-gray-600">{currentOrder.user.email}</p>
+              </div>
             </div>
 
             {/* Delivery Address */}
-            <div className="mb-4">
-              <h3 className="text-sm font-semibold text-gray-700 mb-1">
+            <div className="mb-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-2">
                 Delivery Address
               </h3>
-              <p className="text-gray-700 text-sm">
+              <div className="bg-gray-50 p-3 rounded-lg border text-sm text-gray-700">
                 📍 {currentOrder.deliveryAddress.text}
-              </p>
+              </div>
             </div>
 
             {/* Location Info */}
-            <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+            <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
               <div className="bg-orange-50 p-3 rounded-xl border border-orange-100">
                 <p className="font-semibold text-gray-700 mb-1">
                   Delivery Boy Location
@@ -188,16 +197,46 @@ const DeliveryBoy = () => {
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex justify-end gap-3">
-              <button className="bg-gray-200 px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-300 transition">
-                Cancel
-              </button>
-              <button className="bg-[#ff4d2d] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#e8432b] transition">
+            {/* Map */}
+            <div className="rounded-xl overflow-hidden shadow-md mb-6">
+              <DeliveryBoyMapping currentOrder={currentOrder} />
+            </div>
+
+            {/* Action Button */}
+            {!showBox ? (
+              <button
+                onClick={handleSendOtp}
+                className="bg-[#ff4d2d] w-full py-3 text-white rounded-xl text-base font-medium hover:bg-[#e8432b] transition"
+              >
                 Mark as Delivered
               </button>
-            </div>
-            <DeliveryBoyMapping currentOrder={currentOrder}/>
+            ) : (
+              <div className="mt-4 p-4 border border-orange-100 rounded-xl bg-orange-50/40">
+                <p className="text-sm font-semibold mb-3 text-gray-700">
+                  Enter OTP sent to{" "}
+                  <span className="text-orange-500 font-bold">
+                    {currentOrder.user.fullName}
+                  </span>
+                </p>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="text"
+                    maxLength={6}
+                    placeholder="Enter 6-digit OTP"
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none text-sm tracking-widest font-mono"
+                  />
+                  <button className="px-5 py-2 bg-[#ff4d2d] text-white rounded-lg text-sm font-medium hover:bg-[#e8432b] transition">
+                    Verify
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Didn’t receive the OTP?{" "}
+                  <button className="text-orange-500 hover:underline font-medium">
+                    Resend
+                  </button>
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>
