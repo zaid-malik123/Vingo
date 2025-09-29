@@ -391,3 +391,24 @@ export const getOrderById = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const sendDeliveryOtp = async (req, res) => {
+  try {
+    const { orderId, shopOrderId } = req.body;
+    const order = await Order.findById(orderId).populate("user");
+    const shopOrder = order.shopOrders.id(shopOrderId);
+    if (!order || !shopOrder) {
+      return res
+        .status(400)
+        .json({ message: "Enter valid order/shopOrder id" });
+    }
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+    shopOrder.deliveryOtp = otp;
+    shopOrder.otpExpires = Date.now() + 5 * 60 * 1000;
+    await order.save();
+    await sendDeliveryOtp(order.user, otp);
+    return res.status(200).json({ message: "otp send successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
