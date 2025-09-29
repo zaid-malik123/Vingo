@@ -412,3 +412,35 @@ export const sendDeliveryOtp = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const verifyDeliveryOtp = async (req, res) => {
+  try {
+    const { orderId, shopOrderId, otp } = req.body;
+    const order = await Order.findById(orderId).populate("user");
+    const shopOrder = order.shopOrders.id(shopOrderId);
+
+    if (!order || !shopOrder) {
+      return res
+        .status(400)
+        .json({ message: "Enter valid order/shopOrder id" });
+    }
+    if(shopOrder.deliveryOtp != otp || !shopOrder.otpExpires || shopOrder.otpExpires < Date.now()){
+      return res.status(400).json({message: "Invalid/Expired OTP"})
+    }
+
+    shopOrder.status = "delivered"
+    shopOrder.deliveredAt = Date.now()
+    await order.save()
+
+    await DeliveryAssignment.deleteOne({
+      shopOrderId: shopOrder._id,
+      order: order._id,
+      assignTo: shopOrder.assignedDeliveryBoy
+    })
+
+    return res.status(200).json({message: "Order Delivered Successfully"})
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

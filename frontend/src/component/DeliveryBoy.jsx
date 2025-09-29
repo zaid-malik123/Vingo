@@ -222,7 +222,7 @@ const DeliveryBoy = () => {
                   <input
                     type="text"
                     maxLength={6}
-                    placeholder="Enter 6-digit OTP"
+                    placeholder="Enter 4-digit OTP"
                     className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none text-sm tracking-widest font-mono"
                   />
                   <button className="px-5 py-2 bg-[#ff4d2d] text-white rounded-lg text-sm font-medium hover:bg-[#e8432b] transition">
