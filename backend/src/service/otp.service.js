@@ -20,7 +20,7 @@ await transporter.sendMail({
 })
 }
 
-export const sendDeliveryOtp = async(user, otp)=>{
+export const sendDeliveryOtpInUser = async(user, otp)=>{
 await transporter.sendMail({
     from: process.env.EMAIL,
     to: user.email,

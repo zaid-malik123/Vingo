@@ -12,6 +12,8 @@ router.get("/get-assignments", isAuth, getAssigment)
 
 router.get("/accept-order/:id", isAuth, acceptAssingment)
 
+router.post("/update-status/:orderId/:shopId", isAuth, updateOrderStatus)
+
 router.get("/current-order", isAuth, getCurrentOrder)
 
 router.get("/current-order", isAuth, getOrderById)

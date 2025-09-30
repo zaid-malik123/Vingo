@@ -4,6 +4,7 @@ import axios from "axios";
 import { serverUrl } from "../App";
 import { useEffect, useState } from "react";
 import { FaStore, FaMapMarkerAlt, FaBox } from "react-icons/fa";
+import { ClipLoader } from "react-spinners";
 import DeliveryBoyMapping from "./DeliveryBoyMapping";
 
 const DeliveryBoy = () => {
@@ -11,6 +12,8 @@ const DeliveryBoy = () => {
   const [availableAssignment, setAvailableAssignment] = useState([]);
   const [currentOrder, setCurrentOrder] = useState();
   const [showBox, setShowBox] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false)
 
   const handleGetAssignment = async () => {
     try {
@@ -46,9 +49,42 @@ const DeliveryBoy = () => {
     }
   };
 
-  const handleSendOtp = () => {
+
+  const sendOtp = async () => {
+    setLoading(true)
     try {
+      const res = await axios.post(
+        `${serverUrl}/api/order/send-delivery-otp`,
+        {
+          orderId: currentOrder._id,
+          shopOrderId: currentOrder.shopOrder._id
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      setLoading(false)
       setShowBox(true);
+    } catch (error) {
+      setLoading(false)
+      console.log(error);
+    }
+  };
+  
+  const verifyOtp = async (orderId, shopOrderId) => {
+    try {
+      const res = await axios.post(
+        `${serverUrl}/api/order/verify-delivery-otp`,
+        {
+          orderId: currentOrder._id,
+          shopOrderId: currentOrder.shopOrder._id,
+          otp
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -205,10 +241,10 @@ const DeliveryBoy = () => {
             {/* Action Button */}
             {!showBox ? (
               <button
-                onClick={handleSendOtp}
+                onClick={ sendOtp}
                 className="bg-[#ff4d2d] w-full py-3 text-white rounded-xl text-base font-medium hover:bg-[#e8432b] transition"
               >
-                Mark as Delivered
+                {loading ? <ClipLoader color="white" size={20} /> : "Mark as Delivered"}
               </button>
             ) : (
               <div className="mt-4 p-4 border border-orange-100 rounded-xl bg-orange-50/40">
@@ -220,18 +256,20 @@ const DeliveryBoy = () => {
                 </p>
                 <div className="flex items-center gap-3">
                   <input
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
                     type="text"
                     maxLength={6}
                     placeholder="Enter 4-digit OTP"
                     className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none text-sm tracking-widest font-mono"
                   />
-                  <button className="px-5 py-2 bg-[#ff4d2d] text-white rounded-lg text-sm font-medium hover:bg-[#e8432b] transition">
-                    Verify
+                  <button onClick={ verifyOtp} className="px-5 py-2 bg-[#ff4d2d] text-white rounded-lg text-sm font-medium hover:bg-[#e8432b] transition">
+                    {loading ? <ClipLoader color="white" size={20} /> : "Verify"}
                   </button>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
                   Didn’t receive the OTP?{" "}
-                  <button className="text-orange-500 hover:underline font-medium">
+                  <button onClick={sendOtp} className="text-orange-500 hover:underline font-medium">
                     Resend
                   </button>
                 </p>

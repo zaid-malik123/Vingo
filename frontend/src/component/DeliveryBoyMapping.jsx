@@ -16,8 +16,7 @@ const CustomerIcon = new L.icon({
   iconAnchor: [20, 40],
 });
 
-const DeliveryBoyMapping = ({ currentOrder }) => {
-  console.log(currentOrder)  
+const DeliveryBoyMapping = ({ currentOrder }) => { 
   const deliveryBoyLat = currentOrder.deliveryBoyLocation.lat;
   const deliveryBoyLon = currentOrder.deliveryBoyLocation.lon;
   const customerLat = currentOrder.customerLocation.lat;
