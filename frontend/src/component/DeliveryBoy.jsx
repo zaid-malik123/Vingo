@@ -71,7 +71,7 @@ const DeliveryBoy = () => {
     }
   };
   
-  const verifyOtp = async (orderId, shopOrderId) => {
+  const verifyOtp = async () => {
     try {
       const res = await axios.post(
         `${serverUrl}/api/order/verify-delivery-otp`,

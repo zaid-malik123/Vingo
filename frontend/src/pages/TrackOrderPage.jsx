@@ -39,7 +39,7 @@ const TrackOrderPage = () => {
       {/* Back Button */}
       <div className="flex items-center justify-between mb-8">
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/my-orders")}
           className="flex items-center gap-2 text-orange-600 font-medium hover:text-orange-700 transition"
         >
           <IoArrowBackOutline size={22} />

@@ -92,10 +92,9 @@ const Signup = () => {
         { fullName, email, password, mobileNo, role },
         { withCredentials: true }
       );
-      console.log(res.data)
       dispatch(setUserData(res.data.createdUser));
       setLoading(false);
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       setLoading(false);
       // backend error handling

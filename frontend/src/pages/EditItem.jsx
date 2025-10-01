@@ -8,8 +8,6 @@ import { serverUrl } from "../App";
 import { setMyShopData } from "../redux/ownerSlice";
 import { ClipLoader } from "react-spinners";
 
-
-
 const EditItem = () => {
   const { itemId } = useParams();
   const navigate = useNavigate();

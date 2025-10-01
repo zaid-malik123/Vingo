@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const UserOrderCard = ({ order }) => {
+  console.log(order)
   const navigate = useNavigate()
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -99,9 +100,11 @@ const UserOrderCard = ({ order }) => {
         <p className="font-bold text-gray-800 text-lg">
           Total: ₹{order.totalAmount}
         </p>
-        <button onClick={()=> navigate(`/track-order/${order._id}`) } className="bg-[#ff4d2d] hover:bg-[#e64526] text-white px-6 py-2 rounded-full text-sm font-medium shadow">
+       {order.shopOrders[0].status != "delivered" && (
+         <button onClick={()=> navigate(`/track-order/${order._id}`) } className="bg-[#ff4d2d] hover:bg-[#e64526] text-white px-6 py-2 rounded-full text-sm font-medium shadow">
           Track Order
         </button>
+       )}
       </div>
     </div>
   );

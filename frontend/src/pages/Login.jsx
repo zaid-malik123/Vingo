@@ -67,7 +67,7 @@ const Login = () => {
       );
       dispatch(setUserData(res.data.user));
       setLoading(false);
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       setLoading(false);
       const msg = error.response?.data?.message || "Login failed";
