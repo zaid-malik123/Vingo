@@ -18,6 +18,7 @@ const UserDashboard = () => {
   const [showCateRightButton, setShowCateRightButton] = useState(false);
   const [showShopLeftButton, setShowShopLeftButton] = useState(false);
   const [showShopRightButton, setShowShopRightButton] = useState(false);
+  const [updatedItemList, setUpdatedItemList] = useState([])
 
   const primaryColor = "#ff4d2d";
   const hoverColor = "#e64323";
@@ -46,6 +47,20 @@ const UserDashboard = () => {
       );
     }
   };
+
+  const handleFilterByCategory = (category)=>{
+  if(category == "All"){
+    setUpdatedItemList(itemsInMyCity)
+  }
+  else{
+    const filteredList = itemsInMyCity.filter(i => i.category == category)
+    setUpdatedItemList(filteredList)
+  }
+  }
+
+  useEffect(()=>{
+   setUpdatedItemList(itemsInMyCity)
+  },[itemsInMyCity])
 
   useEffect(() => {
     if (!cateScrollRef.current) return;
@@ -118,6 +133,7 @@ const UserDashboard = () => {
             ) : (
               categories.map((c, i) => (
                 <CategoryCard
+                  onClick={()=> handleFilterByCategory(c.category)}
                   key={i}
                   image={c.image}
                   name={c.category}
@@ -204,7 +220,7 @@ const UserDashboard = () => {
           {!itemsInMyCity || itemsInMyCity.length === 0 ? (
             <Loader count={5} width="250px" height="260px" />
           ) : (
-            itemsInMyCity.map((item, idx) => (
+            updatedItemList.map((item, idx) => (
               <div
                 key={idx}
                 className="w-full max-w-[280px] sm:w-[250px] flex-shrink-0"
