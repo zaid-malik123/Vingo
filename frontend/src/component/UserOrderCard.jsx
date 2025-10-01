@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const UserOrderCard = ({ order }) => {
-  console.log(order)
   const navigate = useNavigate()
   const formatDate = (dateString) => {
     const date = new Date(dateString);

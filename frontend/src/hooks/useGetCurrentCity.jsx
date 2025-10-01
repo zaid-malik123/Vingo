@@ -13,14 +13,12 @@ const useGetCurrentCity = () => {
         console.error("Geolocation is not supported by this browser.");
         return;
       }
-
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const lon = position.coords.longitude;
           const lat = position.coords.latitude;
           const API_KEY = import.meta.env.VITE_GEOPIFY_API_KEY;
           dispatch(setLocation({lat: lat, lon: lon}))
-
           try {
             const res = await axios.get(
               `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lon}&apiKey=${API_KEY}`

@@ -19,7 +19,11 @@ const UserDashboard = () => {
   const [showShopLeftButton, setShowShopLeftButton] = useState(false);
   const [showShopRightButton, setShowShopRightButton] = useState(false);
 
-  // Real loading based on data availability
+  const primaryColor = "#ff4d2d";
+  const hoverColor = "#e64323";
+  const bgColor = "#fff9f6";
+  const borderColor = "#ddd";
+
   const isCategoryLoading = !categories || categories.length === 0;
   const isShopLoading =
     !currentCity || !shopsInMyCity || shopsInMyCity.length === 0;
@@ -43,7 +47,6 @@ const UserDashboard = () => {
     }
   };
 
-  // Scroll listeners
   useEffect(() => {
     if (!cateScrollRef.current) return;
     const handleScroll = () =>
@@ -80,20 +83,27 @@ const UserDashboard = () => {
     };
   }, [currentCity, shopsInMyCity]);
 
+  const sectionTitleClass = "text-gray-800 text-2xl sm:text-3xl font-semibold mb-4";
+
+  const scrollButtonClass =
+    "absolute top-1/2 -translate-y-1/2 p-3 rounded-full shadow-lg z-10 text-white";
+
   return (
-    <div className="w-full min-h-screen bg-[#fff9f6] flex flex-col items-center overflow-y-auto">
+    <div
+      className="w-full min-h-screen flex flex-col items-center overflow-y-auto"
+      style={{ backgroundColor: bgColor }}
+    >
       <Nav />
 
       {/* Category Section */}
       <section className="w-full max-w-6xl flex flex-col gap-6 items-start p-4">
-        <h1 className="text-gray-800 text-2xl sm:text-3xl">
-          Inspiration for your first order
-        </h1>
+        <h1 className={sectionTitleClass}>Inspiration for your first order</h1>
         <div className="w-full relative">
           {showCateLeftButton && (
             <button
               onClick={() => scrollHandler(cateScrollRef, "left")}
-              className="absolute left-1 top-1/2 -translate-y-1/2 bg-[#ff4d2d]/90 text-white p-3 rounded-full shadow-lg hover:bg-[#ff4d2d] z-10"
+              className={scrollButtonClass}
+              style={{ left: 8, backgroundColor: `${primaryColor}/90` }}
             >
               <FaCircleChevronLeft />
             </button>
@@ -107,7 +117,17 @@ const UserDashboard = () => {
               <Loader count={6} width="180px" height="180px" />
             ) : (
               categories.map((c, i) => (
-                <CategoryCard image={c.image} name={c.category} key={i} />
+                <CategoryCard
+                  key={i}
+                  image={c.image}
+                  name={c.category}
+                  style={{
+                    borderRadius: "12px",
+                    boxShadow: `0 4px 8px rgba(0,0,0,0.1)`,
+                    transition: "transform 0.3s",
+                  }}
+                  hoverStyle={{ transform: "scale(1.05)" }}
+                />
               ))
             )}
           </div>
@@ -115,7 +135,8 @@ const UserDashboard = () => {
           {showCateRightButton && (
             <button
               onClick={() => scrollHandler(cateScrollRef, "right")}
-              className="absolute right-1 top-1/2 -translate-y-1/2 bg-[#ff4d2d]/90 text-white p-3 rounded-full shadow-lg hover:bg-[#ff4d2d] z-10"
+              className={scrollButtonClass}
+              style={{ right: 8, backgroundColor: `${primaryColor}/90` }}
             >
               <FaCircleChevronRight />
             </button>
@@ -125,7 +146,7 @@ const UserDashboard = () => {
 
       {/* Shop Section */}
       <section className="w-full max-w-6xl flex flex-col gap-6 items-start p-4">
-        <h1 className="text-gray-800 text-2xl sm:text-3xl">
+        <h1 className={sectionTitleClass}>
           Best Shops in {currentCity || "your city"}
         </h1>
 
@@ -133,7 +154,8 @@ const UserDashboard = () => {
           {showShopLeftButton && (
             <button
               onClick={() => scrollHandler(shopScrollRef, "left")}
-              className="absolute left-1 top-1/2 -translate-y-1/2 bg-[#ff4d2d]/90 text-white p-3 rounded-full shadow-lg hover:bg-[#ff4d2d] z-10"
+              className={scrollButtonClass}
+              style={{ left: 8, backgroundColor: `${primaryColor}/90` }}
             >
               <FaCircleChevronLeft />
             </button>
@@ -147,7 +169,17 @@ const UserDashboard = () => {
               <Loader count={5} width="200px" height="200px" />
             ) : (
               shopsInMyCity?.map((c, i) => (
-                <CategoryCard image={c.image} name={c.name} key={i} />
+                <CategoryCard
+                  key={i}
+                  image={c.image}
+                  name={c.name}
+                  style={{
+                    borderRadius: "12px",
+                    boxShadow: `0 4px 8px rgba(0,0,0,0.1)`,
+                    transition: "transform 0.3s",
+                  }}
+                  hoverStyle={{ transform: "scale(1.05)" }}
+                />
               ))
             )}
           </div>
@@ -155,7 +187,8 @@ const UserDashboard = () => {
           {showShopRightButton && (
             <button
               onClick={() => scrollHandler(shopScrollRef, "right")}
-              className="absolute right-1 top-1/2 -translate-y-1/2 bg-[#ff4d2d]/90 text-white p-3 rounded-full shadow-lg hover:bg-[#ff4d2d] z-10"
+              className={scrollButtonClass}
+              style={{ right: 8, backgroundColor: `${primaryColor}/90` }}
             >
               <FaCircleChevronRight />
             </button>
@@ -165,9 +198,7 @@ const UserDashboard = () => {
 
       {/* Food Section */}
       <section className="w-full max-w-6xl flex flex-col gap-6 items-start p-4">
-        <h1 className="text-gray-800 text-2xl sm:text-3xl">
-          Suggested Food Items
-        </h1>
+        <h1 className={sectionTitleClass}>Suggested Food Items</h1>
 
         <div className="w-full h-auto flex flex-wrap gap-5 justify-center sm:justify-start">
           {!itemsInMyCity || itemsInMyCity.length === 0 ? (
