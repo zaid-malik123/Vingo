@@ -1,18 +1,14 @@
-import { FaLeaf } from "react-icons/fa6";
-import { FaDrumstickBite } from "react-icons/fa6";
-import { FaStar } from "react-icons/fa6";
-import { FaRegStar } from "react-icons/fa";
-import { FaMinus } from "react-icons/fa6";
-import { FaPlus } from "react-icons/fa6";
+import { FaLeaf, FaDrumstickBite, FaMinus, FaPlus } from "react-icons/fa6"; // FA6 icons
+import { FaStar, FaRegStar, FaShoppingCart } from "react-icons/fa";      // FA5 icons
 import { useState } from "react";
-import { FaShoppingCart } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../redux/userSlice";
+
 const FoodCard = ({ data }) => {
   const [quantity, setQuantity] = useState(0);
-   const { user, currentCity, cartItems } = useSelector((state) => state.userSlice);
+  const { cartItems } = useSelector((state) => state.userSlice);
   const dispatch = useDispatch();
-  // Render stars based on rating
+
   const renderStars = (rating = 0) => {
     const stars = [];
     for (let i = 0; i < 5; i++) {
@@ -27,15 +23,14 @@ const FoodCard = ({ data }) => {
     return stars;
   };
 
-  // Increase / Decrease Quantity
   const handleIncrease = () => setQuantity((prev) => prev + 1);
   const handleDecrease = () => setQuantity((prev) => (prev > 0 ? prev - 1 : 0));
 
   return (
-    <div className="w-[260px] rounded-2xl border-2 border-[#ff4d2d] bg-white shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col">
-      {/* Image Section */}
-      <div className="relative w-full h-[170px] flex justify-center items-center bg-gray-50">
-        <div className="absolute top-3 right-3 bg-white rounded-full p-1 shadow-md">
+    <div className="w-[260px] rounded-3xl border border-gray-100 bg-white shadow-md hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden">
+      {/* Image */}
+      <div className="relative w-full h-[180px] flex justify-center items-center bg-gray-50 overflow-hidden rounded-t-3xl">
+        <div className="absolute top-3 left-3 bg-white p-2 rounded-full shadow-md">
           {data.foodType === "veg" ? (
             <FaLeaf className="text-green-600 text-lg" />
           ) : (
@@ -43,73 +38,64 @@ const FoodCard = ({ data }) => {
           )}
         </div>
         <img
-          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
           src={data.image}
           alt={data.name}
+          className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
         />
       </div>
 
-      {/* Content Section */}
-      <div className="flex-1 flex flex-col p-4">
-        {/* Title */}
-        <h1 className="font-semibold text-gray-900 text-base truncate">
-          {data.name}
-        </h1>
+      {/* Content */}
+      <div className="flex-1 flex flex-col p-4 gap-2">
+        <h1 className="font-semibold text-gray-900 text-base truncate">{data.name}</h1>
 
-        {/* Rating */}
-        <div className="flex items-center gap-1 mt-1">
+        <div className="flex items-center gap-1">
           {renderStars(data.rating?.average || 0)}
-          <span className="text-xs text-gray-500">
-            ({data.rating?.count || 0})
-          </span>
+          <span className="text-xs text-gray-400">({data.rating?.count || 0})</span>
         </div>
 
-        {/* Price + Controls */}
-        <div className="flex items-center justify-between mt-auto pt-4">
-          <span className="font-bold text-[#ff4d2d] text-lg">
-            ₹{data.price}
-          </span>
+        <span className="text-lg font-bold text-[#ff4d2d] mt-1">₹{data.price}</span>
 
-          <div className="flex items-center border rounded-full overflow-hidden shadow-sm bg-gray-50">
-            {/* Decrease */}
+        {/* Quantity + Cart */}
+        <div className="mt-auto flex items-center justify-between">
+          <div className="flex items-center border rounded-full bg-gray-100 overflow-hidden shadow-sm">
             <button
               onClick={handleDecrease}
-              className="px-2 py-1 hover:bg-gray-200 transition"
+              className="px-3 py-1 text-gray-700 hover:bg-gray-200 transition"
             >
               <FaMinus />
             </button>
-
-            {/* Qty */}
-            <span className="px-2 text-sm font-medium">{quantity}</span>
-
-            {/* Increase */}
+            <span className="px-4 font-medium">{quantity}</span>
             <button
               onClick={handleIncrease}
-              className="px-2 py-1 hover:bg-gray-200 transition"
+              className="px-3 py-1 text-gray-700 hover:bg-gray-200 transition"
             >
               <FaPlus />
             </button>
-
-            {/* Cart */}
-            <button
-              onClick={() =>
-                quantity > 0 ?dispatch(
-                  addToCart({
-                    id: data._id,
-                    name: data.name,
-                    price: data.price,
-                    image: data.image,
-                    shop: data.shop,
-                    quantity,
-                    foodType: data.foodType,
-                  })
-                ): null
-              }
-              className={`${cartItems.some(i=> i.id== data._id)? "bg-gray-800": "bg-[#ff4d2d]"} text-white px-3 py-2 hover:bg-[#e04428] transition`}
-            >
-              <FaShoppingCart />
-            </button>
           </div>
+
+          <button
+            onClick={() =>
+              quantity > 0 &&
+              dispatch(
+                addToCart({
+                  id: data._id,
+                  name: data.name,
+                  price: data.price,
+                  image: data.image,
+                  shop: data.shop,
+                  quantity,
+                  foodType: data.foodType,
+                })
+              )
+            }
+            className={`ml-2 px-4 py-2 rounded-full text-white font-semibold transition ${
+              cartItems.some((i) => i.id === data._id)
+                ? "bg-gray-800 hover:bg-gray-900"
+                : "bg-[#ff4d2d] hover:bg-[#e04428]"
+            }`}
+          >
+            <FaShoppingCart />
+          </button>
         </div>
       </div>
     </div>
