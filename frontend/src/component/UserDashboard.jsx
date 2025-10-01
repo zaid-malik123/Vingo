@@ -6,6 +6,7 @@ import { FaCircleChevronLeft, FaCircleChevronRight } from "react-icons/fa6";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import FoodCard from "./FoodCard";
+import { useNavigate } from "react-router-dom";
 
 const UserDashboard = () => {
   const { currentCity, shopsInMyCity, itemsInMyCity } = useSelector(
@@ -13,6 +14,7 @@ const UserDashboard = () => {
   );
   const cateScrollRef = useRef();
   const shopScrollRef = useRef();
+  const navigate = useNavigate()
 
   const [showCateLeftButton, setShowCateLeftButton] = useState(false);
   const [showCateRightButton, setShowCateRightButton] = useState(false);
@@ -186,6 +188,7 @@ const UserDashboard = () => {
             ) : (
               shopsInMyCity?.map((c, i) => (
                 <CategoryCard
+                  onClick={()=> navigate(`/shop/${c._id}`) }
                   key={i}
                   image={c.image}
                   name={c.name}
@@ -218,9 +221,9 @@ const UserDashboard = () => {
 
         <div className="w-full h-auto flex flex-wrap gap-5 justify-center sm:justify-start">
           {!itemsInMyCity || itemsInMyCity.length === 0 ? (
-            <Loader count={5} width="250px" height="260px" />
+            <Loader count={5} width="200px" height="260px" />
           ) : (
-            updatedItemList.map((item, idx) => (
+            updatedItemList?.map((item, idx) => (
               <div
                 key={idx}
                 className="w-full max-w-[280px] sm:w-[250px] flex-shrink-0"

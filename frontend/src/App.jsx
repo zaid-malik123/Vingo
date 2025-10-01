@@ -20,6 +20,7 @@ import useGetMyOrders from "./hooks/useGetMyOrders";
 import useGetShopByCity from "./hooks/useGetShopByCity";
 import useGetItemsByCity from "./hooks/useGetItemsByCity";
 import useUpdateLocation from "./hooks/useUpdateLocation";
+import Shop from "./pages/Shop"
 
 export const serverUrl = "http://localhost:3000";
 
@@ -97,6 +98,11 @@ const App = () => {
           path="/track-order/:orderId"
           element={user ? <TrackOrderPage /> : <Navigate to={"/login"} />}
         />
+        <Route
+          path="/shop/:id"
+          element={user ? <Shop /> : <Navigate to={"/login"} />}
+        />
+
       </Routes>
     </div>
   );
