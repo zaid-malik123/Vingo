@@ -4,6 +4,14 @@ import Shop from "../models/shop.model.js";
 import User from "../models/user.model.js";
 import { sendDeliveryOtpInUser } from "../service/otp.service.js";
 
+import Razorpay from "razorpay"
+import dotenv from "dotenv"
+dotenv.config()
+var instance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
 export const placeOrder = async (req, res) => {
   try {
     const { cartItems, paymentMethod, deliveryAddress, totalAmount } = req.body;
@@ -61,6 +69,32 @@ export const placeOrder = async (req, res) => {
         };
       })
     );
+   
+
+   if(paymentMethod == "online"){
+     const razorOrder = instance.orders.create({
+      amount: Math.round(totalAmount*100),
+      currency: "INR",
+      receipt: `receipt_${Date.now()}`
+     })
+     const newOrder = await Order.create({
+      user: req.userId,
+      paymentMethod,
+      deliveryAddress,
+      totalAmount,
+      shopOrders,
+      razorpayOrderId: razorOrder.id,
+      payment: false
+    });
+    
+    return res.status(200).json({
+      razorOrder,
+      orderId: newOrder._id,
+      key_id: process.env.RAZORPAY_KEY_ID,
+    })
+
+   }
+
 
     const newOrder = await Order.create({
       user: req.userId,

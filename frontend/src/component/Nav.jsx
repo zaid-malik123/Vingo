@@ -207,7 +207,7 @@ const Nav = () => {
 
       {/* Mobile Search */}
       {showSearch && user?.role === "user" && (
-        <div className="absolute top-[82px] left-[5%] w-[90%] h-[55px] bg-white shadow-lg rounded-xl flex items-center gap-3 px-3 md:hidden transition-all">
+        <div className="absolute top-[80px] left-[5%] w-[90%] h-[55px] bg-white shadow-lg rounded-xl flex items-center gap-3 px-3 md:hidden transition-all">
           <FaLocationDot className="w-5 h-5 text-[#ff4d2d]" />
           <div className="flex-1 text-gray-600 truncate">
             {currentCity ? (
