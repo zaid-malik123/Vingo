@@ -8,7 +8,8 @@ const initialState = {
   shopsInMyCity: null,
   itemsInMyCity: null,
   cartItems: [],
-  myOrders: []
+  myOrders: [],
+  searchItem: null,
 };
 
 export const userSlice = createSlice({
@@ -67,21 +68,25 @@ export const userSlice = createSlice({
       state.cartItems = state.cartItems.filter((i) => i.id !== itemId);
     },
 
-    setMyOrders: (state, action)=>{
-     state.myOrders = action.payload
+    setMyOrders: (state, action) => {
+      state.myOrders = action.payload;
     },
-    addMyOrder: (state, action)=>{
-     state.myOrders = [action.payload,...state.myOrders]
+    addMyOrder: (state, action) => {
+      state.myOrders = [action.payload, ...state.myOrders];
     },
-    updateOrderStatus: (state, action)=>{
-     const {orderId, shopId, status} = action.payload;
-     const order = state.myOrders.find(o=> o._id==orderId)
-     if(order){
-      if(order.shopOrders  && order.shopOrders.shop._id == shopId){
-       order.shopOrders.status = status
+    updateOrderStatus: (state, action) => {
+      const { orderId, shopId, status } = action.payload;
+      const order = state.myOrders.find((o) => o._id == orderId);
+      if (order) {
+        if (order.shopOrders && order.shopOrders.shop._id == shopId) {
+          order.shopOrders.status = status;
+        }
       }
-     }
-    }
+    },
+
+    setSearchItem: (state, action) => {
+     state.searchItem = action.payload
+    },
   },
 });
 
@@ -97,7 +102,8 @@ export const {
   removeFromCart,
   setMyOrders,
   addMyOrder,
-  updateOrderStatus
+  updateOrderStatus,
+  setSearchItem
 } = userSlice.actions;
 
 export default userSlice.reducer;

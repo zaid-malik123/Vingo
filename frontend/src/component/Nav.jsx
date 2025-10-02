@@ -8,15 +8,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { serverUrl } from "../App";
-import { setCity, setUserData } from "../redux/userSlice";
+import { setCity, setSearchItem, setUserData } from "../redux/userSlice";
+import { useEffect } from "react";
 
 const Nav = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, currentCity, cartItems } = useSelector((state) => state.userSlice);
+  const { user, currentCity, cartItems } = useSelector(
+    (state) => state.userSlice
+  );
   const { shop } = useSelector((state) => state.ownerSlice);
   const [showInfo, setShowInfo] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [query, setQuery] = useState("");
 
   const primaryColor = "#ff4d2d";
   const hoverColor = "#e64323";
@@ -24,7 +28,9 @@ const Nav = () => {
 
   const logoutHandler = async () => {
     try {
-      await axios.get(`${serverUrl}/api/auth/logout`, { withCredentials: true });
+      await axios.get(`${serverUrl}/api/auth/logout`, {
+        withCredentials: true,
+      });
       dispatch(setUserData(null));
       dispatch(setCity(null));
       navigate("/login");
@@ -32,6 +38,27 @@ const Nav = () => {
       console.log(error);
     }
   };
+
+  const handleSearchItem = async () => {
+    try {
+      const res = await axios.get(
+        `${serverUrl}/api/item/search-items?query=${query}&city=${currentCity}`,
+        { withCredentials: true }
+      );
+      dispatch(setSearchItem(res.data))
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+   if(query){
+     handleSearchItem();
+   }
+   else{
+    dispatch(setSearchItem(null))
+   }
+  }, [query]);
 
   return (
     <div
@@ -51,7 +78,10 @@ const Nav = () => {
       {user?.role === "user" && (
         <div className="hidden md:flex w-[60%] lg:w-[40%] h-[50px] bg-white shadow-md rounded-xl items-center overflow-hidden">
           <div className="flex items-center w-[30%] px-4 border-r border-gray-200">
-            <FaLocationDot className="w-5 h-5" style={{ color: primaryColor }} />
+            <FaLocationDot
+              className="w-5 h-5"
+              style={{ color: primaryColor }}
+            />
             <div className="ml-2 text-gray-600 truncate flex items-center gap-2">
               {currentCity ? (
                 currentCity
@@ -65,6 +95,8 @@ const Nav = () => {
           <div className="flex items-center gap-2 w-full px-4">
             <IoSearch size={22} className="text-[#ff4d2d]" />
             <input
+              onChange={(e) => setQuery(e.target.value)}
+              value={query}
               className="px-2 py-1 text-gray-700 outline-none w-full text-sm"
               type="text"
               placeholder="Search delicious food..."
@@ -188,6 +220,8 @@ const Nav = () => {
           </div>
           <IoSearch size={22} className="text-[#ff4d2d]" />
           <input
+            onChange={(e) => setQuery(e.target.value)}
+            value={query}
             className="flex-1 px-2 text-gray-700 outline-none text-sm"
             type="text"
             placeholder="Search delicious food..."

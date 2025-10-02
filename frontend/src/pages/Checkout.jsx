@@ -29,7 +29,7 @@ const Checkout = () => {
   const navigate = useNavigate();
   const API_KEY = import.meta.env.VITE_GEOPIFY_API_KEY;
   const { location, address } = useSelector((state) => state.mapSlice);
-  const { cartItems } = useSelector((state) => state.userSlice);
+  const { cartItems, user } = useSelector((state) => state.userSlice);
   const [addressInput, setAddressInput] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const dispatch = useDispatch();
@@ -74,22 +74,10 @@ const Checkout = () => {
 
   // 📍 Get Current Location (Blue Button)
   const getCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const lat = pos.coords.latitude;
-          const lon = pos.coords.longitude;
-          dispatch(setLocation({ lat, lon }));
-          getAddressByLatLng(lat, lon);
-        },
-        (err) => {
-          console.log("Error getting current location:", err);
-          alert("Unable to fetch your location. Please enable GPS.");
-        }
-      );
-    } else {
-      alert("Geolocation is not supported by this browser.");
-    }
+   const latitude = user.location.coordinates[1]
+   const longitude = user.location.coordinates[0]
+   dispatch(setLocation({lat: latitude, lon: longitude}))
+   getAddressByLatLng(latitude, longitude)
   };
 
   const handlePlaceOrder = async ()=>{
