@@ -4,7 +4,7 @@ import OwnerOrderCard from "../component/OwnerOrderCard";
 import { useNavigate } from "react-router-dom";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { useEffect } from "react";
-import { setMyOrders } from "../redux/userSlice";
+import { setMyOrders, updateRealTimeOrderStatus } from "../redux/userSlice";
 
 const MyOrder = () => {
   const { user, myOrders, socket } = useSelector((state) => state.userSlice);
@@ -17,8 +17,16 @@ const MyOrder = () => {
         dispatch(setMyOrders([data, ...myOrders]))
       }
     })
+
+   socket?.on("updateStatus",({orderId, shopId, status, userId})=>{
+   if(userId == user._id){
+    dispatch(updateRealTimeOrderStatus({orderId, shopId, status}))
+   }
+   })
+
     return ()=>{
       socket?.off("newOrder")
+      socket?.off("updateStatus")
     }
   },[socket])
 
