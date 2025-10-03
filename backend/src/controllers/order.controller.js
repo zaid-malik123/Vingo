@@ -145,8 +145,26 @@ export const verifyPayment = async (req, res) => {
     order.payment = true;
     order.razorpayPaymentId = razorpay_payment_id;
     await order.save();
-    await order.populate("shopOrders.shopOrderItems.item", "name image price");
     await order.populate("shopOrders.shop", "name");
+    await order.populate("shopOrders.owner", "name socketId");
+    await order.populate("user", "name email mobileNo");
+    const io = req.app.get("io");
+    if (io) {
+      order.shopOrders.forEach((shopOrder) => {
+        const ownerSocketId = shopOrder.owner.socketId;
+        if (ownerSocketId) {
+          io.to(ownerSocketId).emit("newOrder", {
+            _id: order._id,
+            paymentMethod: order.paymentMethod,
+            user: order.user,
+            shopOrders: shopOrder,
+            createdAt: order.createdAt,
+            deliveryAddress: order.deliveryAddress,
+            payment: order.payment,
+          });
+        }
+      });
+    }
 
     return res.status(201).json(order);
   } catch (error) {
