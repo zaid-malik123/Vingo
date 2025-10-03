@@ -74,30 +74,84 @@ const Checkout = () => {
 
   // 📍 Get Current Location (Blue Button)
   const getCurrentLocation = () => {
-   const latitude = user.location.coordinates[1]
-   const longitude = user.location.coordinates[0]
-   dispatch(setLocation({lat: latitude, lon: longitude}))
-   getAddressByLatLng(latitude, longitude)
+    const latitude = user.location.coordinates[1];
+    const longitude = user.location.coordinates[0];
+    dispatch(setLocation({ lat: latitude, lon: longitude }));
+    getAddressByLatLng(latitude, longitude);
   };
 
-  const handlePlaceOrder = async ()=>{
-  try {
-    const res = await axios.post(`${serverUrl}/api/order/place-order`,{
-      paymentMethod,
-      deliveryAddress:{
-        text: addressInput,
-        latitude: location.lat,
-        longitude: location.lon
-      },
-      totalAmount : totalPrice,
-      cartItems
-    },{withCredentials:true})
-    dispatch(addMyOrder(res.data))
-    navigate("/order-placed")
-  } catch (error) {
-    console.log(error)
-  }
-  }
+  const handlePlaceOrder = async () => {
+    try {
+      const res = await axios.post(
+        `${serverUrl}/api/order/place-order`,
+        {
+          paymentMethod,
+          deliveryAddress: {
+            text: addressInput,
+            latitude: location.lat,
+            longitude: location.lon,
+          },
+          totalAmount: totalPrice,
+          cartItems,
+        },
+        { withCredentials: true }
+      );
+      if (paymentMethod == "cod") {
+        dispatch(addMyOrder(res.data));
+        navigate("/order-placed");
+      }
+      else{
+        const orderId = res.data.orderId
+        const razorOrder = res.data.razorOrder
+        openRazorpayWindow(orderId, razorOrder)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+ const openRazorpayWindow = (orderId, razorOrder) => {
+  const options = {
+    key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+    amount: razorOrder.amount,
+    currency: "INR",
+    name: "Vingo",
+    description: "Food Delivery Website",
+    order_id: razorOrder.id,
+    handler: async function (response) {
+      try {
+        const res = await axios.post(
+          `${serverUrl}/api/order/verify-payment`,
+          {
+            razorpay_payment_id: response.razorpay_payment_id,
+            orderId,
+          },
+          { withCredentials: true }
+        );
+        dispatch(addMyOrder(res.data));
+        navigate("/order-placed");
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    theme: {
+      color: "#ff4d2d",
+    },
+    method: {
+      upi: true, // ✅ UPI option enable karne ke liye
+      card: true,
+      netbanking: true,
+      wallet: true,
+    },
+    upi: {
+      flow: "collect", // ✅ Ye UPI ID enter karne ka option dikhata hai
+    },
+  };
+
+  const rzp = new window.Razorpay(options);
+  rzp.open();
+};
+
 
   useEffect(() => {
     setAddressInput(address);
@@ -282,7 +336,7 @@ const Checkout = () => {
                  hover:brightness-110 active:scale-95 transition-all
                  text-white py-3.5 rounded-2xl font-semibold text-lg shadow-lg"
             >
-              {paymentMethod == "cod" ? "Place Order": "Pay & Place Order"}
+              {paymentMethod == "cod" ? "Place Order" : "Pay & Place Order"}
             </button>
           </div>
         </section>
