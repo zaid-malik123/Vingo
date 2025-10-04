@@ -8,7 +8,7 @@ import { ClipLoader } from "react-spinners";
 import DeliveryBoyMapping from "./DeliveryBoyMapping";
 
 const DeliveryBoy = () => {
-  const { user } = useSelector((state) => state.userSlice);
+  const { user, socket } = useSelector((state) => state.userSlice);
   const [availableAssignment, setAvailableAssignment] = useState([]);
   const [currentOrder, setCurrentOrder] = useState();
   const [showBox, setShowBox] = useState(false);
@@ -94,6 +94,17 @@ const DeliveryBoy = () => {
     handleGetAssignment();
     handleGetCurrentOrder();
   }, [user]);
+
+  useEffect(()=>{
+    socket?.on("newAssignment",(data)=>{
+      if(data.sentTo == user._id){
+        setAvailableAssignment([...prev, data])
+      }
+    })
+    return ()=>{
+      socket?.off("newAssignment")
+    }
+  },[socket])
 
   return (
     <div className="w-full min-h-screen bg-[#fff9f6] flex flex-col items-center">
