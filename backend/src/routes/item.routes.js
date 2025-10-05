@@ -1,7 +1,7 @@
 import express from "express"
 import multer from "multer"
 import { isAuth } from "../middleware/isAuth.js";
-import { addItem, deleteItem, editItem, findSingleItem, getItemByCity, getItemsByShop, searchItems } from "../controllers/item.controller.js";
+import { addItem, deleteItem, editItem, findSingleItem, getItemByCity, getItemsByShop, rating, searchItems } from "../controllers/item.controller.js";
 const upload = multer({storage: multer.memoryStorage()});
 const router = express.Router();
 
@@ -18,5 +18,7 @@ router.get("/get-item-by-city/:city",isAuth, getItemByCity)
 router.get("/get-by-shop/:shopId",isAuth, getItemsByShop)
 
 router.get("/search-items",isAuth, searchItems)
+
+router.post("/rating", isAuth, rating)
 
 export default router;

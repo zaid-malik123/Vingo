@@ -16,34 +16,29 @@ const DeliveryBoy = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!socket || user.role !== "deliveryBoy") return;
-
+    if (!socket || user.role != "deliveryBoy") return;
     let watchId;
-
     if (navigator.geolocation) {
-      watchId = navigator.geolocation.watchPosition(
-        (position) => {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
+      watchId = navigator.geolocation.watchPosition((position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        socket.emit("updateLocation", {
+          latitude,
+          longitude,
+          userId: user._id
+        })
+      });
+      (error)=>{
+        console.log(error)
+      },
+      {
+        enableHighAccuracy: true,
 
-          socket.emit("updateLocation", {
-            latitude,
-            longitude,
-            userId: user._id,
-          });
-        },
-        (error) => {
-          console.error("Geolocation error:", error);
-        },
-        {
-          enableHighAccuracy: true,
-        }
-      );
+      }
+      return ()=>{
+        if(watchId) navigator.geolocation.clearWatch(watchId)
+      }
     }
-
-    return () => {
-      if (watchId) navigator.geolocation.clearWatch(watchId);
-    };
   }, [socket, user]);
 
   const handleGetAssignment = async () => {
