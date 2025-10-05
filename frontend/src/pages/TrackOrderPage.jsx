@@ -12,11 +12,14 @@ import {
   FaPhoneAlt,
 } from "react-icons/fa";
 import DeliveryBoyMapping from "../component/DeliveryBoyMapping";
+import { useSelector } from "react-redux";
 
 const TrackOrderPage = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const [currentOrder, setCurrentOrder] = useState();
+  const { user, socket } = useSelector((state) => state.userSlice);
+  const [liveLocation, setLiveLocation] = useState({});
 
   const handleGetOrder = async () => {
     try {
@@ -33,6 +36,24 @@ const TrackOrderPage = () => {
   useEffect(() => {
     handleGetOrder();
   }, [orderId]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleUpdate = ({ deliveryBoyId, latitude, longitude }) => {
+      setLiveLocation((prev) => ({
+        ...prev,
+        [deliveryBoyId]: { lat: latitude, lon: longitude },
+      }));
+    };
+
+    socket.on("updateDeliveryLocation", handleUpdate);
+
+    // cleanup listener
+    return () => {
+      socket.off("updateDeliveryLocation", handleUpdate);
+    };
+  }, [socket]);
 
   return (
     <div className="max-w-4xl mx-auto p-6 flex flex-col gap-6 relative">
@@ -136,7 +157,9 @@ const TrackOrderPage = () => {
               <div className="h-[400px] w-full rounded-2xl overflow-hidden shadow-md">
                 <DeliveryBoyMapping
                   currentOrder={{
-                    deliveryBoyLocation: {
+                    deliveryBoyLocation: liveLocation[
+                      so.assignedDeliveryBoy._id
+                    ] || {
                       lat: so.assignedDeliveryBoy.location.coordinates[1],
                       lon: so.assignedDeliveryBoy.location.coordinates[0],
                     },

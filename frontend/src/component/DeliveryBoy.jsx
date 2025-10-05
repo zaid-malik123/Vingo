@@ -13,7 +13,38 @@ const DeliveryBoy = () => {
   const [currentOrder, setCurrentOrder] = useState();
   const [showBox, setShowBox] = useState(false);
   const [otp, setOtp] = useState("");
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!socket || user.role !== "deliveryBoy") return;
+
+    let watchId;
+
+    if (navigator.geolocation) {
+      watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+
+          socket.emit("updateLocation", {
+            latitude,
+            longitude,
+            userId: user._id,
+          });
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+        },
+        {
+          enableHighAccuracy: true,
+        }
+      );
+    }
+
+    return () => {
+      if (watchId) navigator.geolocation.clearWatch(watchId);
+    };
+  }, [socket, user]);
 
   const handleGetAssignment = async () => {
     try {
@@ -49,28 +80,27 @@ const DeliveryBoy = () => {
     }
   };
 
-
   const sendOtp = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       const res = await axios.post(
         `${serverUrl}/api/order/send-delivery-otp`,
         {
           orderId: currentOrder._id,
-          shopOrderId: currentOrder.shopOrder._id
+          shopOrderId: currentOrder.shopOrder._id,
         },
         {
           withCredentials: true,
         }
       );
-      setLoading(false)
+      setLoading(false);
       setShowBox(true);
     } catch (error) {
-      setLoading(false)
+      setLoading(false);
       console.log(error);
     }
   };
-  
+
   const verifyOtp = async () => {
     try {
       const res = await axios.post(
@@ -78,7 +108,7 @@ const DeliveryBoy = () => {
         {
           orderId: currentOrder._id,
           shopOrderId: currentOrder.shopOrder._id,
-          otp
+          otp,
         },
         {
           withCredentials: true,
@@ -95,16 +125,16 @@ const DeliveryBoy = () => {
     handleGetCurrentOrder();
   }, [user]);
 
-  useEffect(()=>{
-    socket?.on("newAssignment",(data)=>{
-      if(data.sentTo == user._id){
-        setAvailableAssignment([...prev, data])
+  useEffect(() => {
+    socket?.on("newAssignment", (data) => {
+      if (data.sentTo == user._id) {
+        setAvailableAssignment((prev) => [...prev, data]);
       }
-    })
-    return ()=>{
-      socket?.off("newAssignment")
-    }
-  },[socket])
+    });
+    return () => {
+      socket?.off("newAssignment");
+    };
+  }, [socket]);
 
   return (
     <div className="w-full min-h-screen bg-[#fff9f6] flex flex-col items-center">
@@ -252,10 +282,14 @@ const DeliveryBoy = () => {
             {/* Action Button */}
             {!showBox ? (
               <button
-                onClick={ sendOtp}
+                onClick={sendOtp}
                 className="bg-[#ff4d2d] w-full py-3 text-white rounded-xl text-base font-medium hover:bg-[#e8432b] transition"
               >
-                {loading ? <ClipLoader color="white" size={20} /> : "Mark as Delivered"}
+                {loading ? (
+                  <ClipLoader color="white" size={20} />
+                ) : (
+                  "Mark as Delivered"
+                )}
               </button>
             ) : (
               <div className="mt-4 p-4 border border-orange-100 rounded-xl bg-orange-50/40">
@@ -274,13 +308,23 @@ const DeliveryBoy = () => {
                     placeholder="Enter 4-digit OTP"
                     className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none text-sm tracking-widest font-mono"
                   />
-                  <button onClick={ verifyOtp} className="px-5 py-2 bg-[#ff4d2d] text-white rounded-lg text-sm font-medium hover:bg-[#e8432b] transition">
-                    {loading ? <ClipLoader color="white" size={20} /> : "Verify"}
+                  <button
+                    onClick={verifyOtp}
+                    className="px-5 py-2 bg-[#ff4d2d] text-white rounded-lg text-sm font-medium hover:bg-[#e8432b] transition"
+                  >
+                    {loading ? (
+                      <ClipLoader color="white" size={20} />
+                    ) : (
+                      "Verify"
+                    )}
                   </button>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
                   Didn’t receive the OTP?{" "}
-                  <button onClick={sendOtp} className="text-orange-500 hover:underline font-medium">
+                  <button
+                    onClick={sendOtp}
+                    className="text-orange-500 hover:underline font-medium"
+                  >
                     Resend
                   </button>
                 </p>
