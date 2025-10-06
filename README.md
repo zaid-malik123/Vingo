@@ -1,7 +1,7 @@
 <h1 align="center">🚖 Vingo — Food Delivery App</h1>
 
 <p align="center">
-  <b>A modern, responsive, and feature-rich ride-sharing application built with React, Vite, and Node.js.</b><br/>
+  <b>Vingo is a modern, responsive, and feature-rich food delivery platform that allows users to browse restaurants, place orders, track deliveries in real-time, and pay securely. Built with React, Vite, and Node.js, Vingo provides a seamless experience for both customers and restaurants.</b><br/>
   Seamlessly integrates real-time tracking, secure payments, and Google authentication.
 </p>
 
