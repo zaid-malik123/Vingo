@@ -25,7 +25,7 @@ import { useEffect } from "react";
 import { io } from "socket.io-client";
 import { setSocket } from "./redux/userSlice";
 
-export const serverUrl = "http://localhost:3000";
+export const serverUrl = "https://vingo-backend-8qh7.onrender.com";
 
 const App = () => {
   const { user } = useSelector((state) => state.userSlice);
