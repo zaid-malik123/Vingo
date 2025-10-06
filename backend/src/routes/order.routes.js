@@ -1,6 +1,6 @@
 import express from "express"
 import { isAuth } from "../middleware/isAuth.js";
-import {   acceptAssingment, getAssigment, getCurrentOrder, getMyOrders, getOrderById, placeOrder, sendDeliveryOtp, updateOrderStatus, verifyDeliveryOtp, verifyPayment } from "../controllers/order.controller.js";
+import {   acceptAssingment, getAssigment, getCurrentOrder, getMyOrders, getOrderById, getTodayDelivery, placeOrder, sendDeliveryOtp, updateOrderStatus, verifyDeliveryOtp, verifyPayment } from "../controllers/order.controller.js";
 
 const router = express.Router();
 
@@ -26,5 +26,6 @@ router.post("/verify-delivery-otp", isAuth, verifyDeliveryOtp)
 
 router.post("/verify-payment", isAuth, verifyPayment)
 
+router.get("/get-today-deliveries", isAuth, getTodayDelivery)
 
 export default router;

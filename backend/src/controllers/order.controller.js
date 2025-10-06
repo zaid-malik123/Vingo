@@ -6,6 +6,7 @@ import { sendDeliveryOtpInUser } from "../service/otp.service.js";
 
 import Razorpay from "razorpay";
 import dotenv from "dotenv";
+import orders from "razorpay/dist/types/orders.js";
 dotenv.config();
 var instance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -576,5 +577,59 @@ export const verifyDeliveryOtp = async (req, res) => {
     return res.status(200).json({ message: "Order Delivered Successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const getTodayDelivery = async (req, res) => {
+  try {
+    const deliveryBoyId = req.userId;
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const orders = await Order.find({
+      shopOrders: {
+        $elemMatch: {
+          assignedDeliveryBoy: deliveryBoyId,
+          status: "delivered",
+          deliveredAt: { $gte: startOfDay, $lte: endOfDay }
+        }
+      }
+    }).lean();
+
+    let todaysDelivery = [];
+    orders.forEach(order => {
+      order.shopOrders.forEach(shopOrder => {
+        if (
+          shopOrder.assignedDeliveryBoy == deliveryBoyId &&
+          shopOrder.status === "delivered" &&
+          new Date(shopOrder.deliveredAt) >= startOfDay &&
+          new Date(shopOrder.deliveredAt) <= endOfDay
+        ) {
+          todaysDelivery.push(shopOrder);
+        }
+      });
+    });
+
+    // Calculate hourly stats
+    let stats = {};
+    todaysDelivery.forEach(shopOrder => {
+      const hour = new Date(shopOrder.deliveredAt).getHours();
+      stats[hour] = (stats[hour] || 0) + 1;
+    });
+
+    let formattedStats = Object.keys(stats).map(hour => ({
+      hour: parseInt(hour),
+      count: stats[hour]
+    }));
+
+    formattedStats.sort((a, b) => a.hour - b.hour);
+
+    return res.status(200).json(formattedStats);
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: error.message });
   }
 };
