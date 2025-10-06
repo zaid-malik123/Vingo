@@ -25,6 +25,7 @@ const DeliveryBoy = () => {
   const [loading, setLoading] = useState(false);
   const [todayDeliveries, setTodayDeliveries] = useState([]);
   const [totalEarning, setTotalEarning] = useState(0);
+  const [otpError, setOtpError] = useState("");
 
   useEffect(() => {
     if (!socket || user.role != "deliveryBoy") return;
@@ -107,6 +108,14 @@ const DeliveryBoy = () => {
   };
 
   const verifyOtp = async () => {
+    if (!otp || otp.length < 4) {
+      setOtpError("Please enter a valid 4-digit OTP.");
+      return;
+    }
+
+    setLoading(true);
+    setOtpError("");
+
     try {
       const res = await axios.post(
         `${serverUrl}/api/order/verify-delivery-otp`,
@@ -115,13 +124,20 @@ const DeliveryBoy = () => {
           shopOrderId: currentOrder.shopOrder._id,
           otp,
         },
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
-      console.log(res.data);
+
+      if (res.data.message === "Order Delivered Successfully") {
+        location.reload();
+      }
     } catch (error) {
-      console.log(error);
+      if (error.response?.data?.message) {
+        setOtpError(error.response.data.message);
+      } else {
+        setOtpError("Something went wrong. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -389,6 +405,10 @@ const DeliveryBoy = () => {
                     )}
                   </button>
                 </div>
+                {otpError && (
+                  <p className="text-xs text-red-500 mt-2">{otpError}</p>
+                )}
+                
                 <p className="text-xs text-gray-500 mt-2">
                   Didn’t receive the OTP?{" "}
                   <button
