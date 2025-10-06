@@ -184,10 +184,9 @@ export const searchItems = async (req, res) => {
   }
 };
 
-export const rating = ()=> async (req, res, next)=>{
+export const itemRating = async (req, res, next)=>{
   try {
     const {itemId, rating} = req.body;
-
     if(!itemId || !rating){
       return res.status(400).json({message: "All fields are required"})
     }

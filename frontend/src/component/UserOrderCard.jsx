@@ -8,7 +8,8 @@ const UserOrderCard = ({ order }) => {
   const navigate = useNavigate();
   const [selectedRating, setSelectedRating] = useState({});
   const [hoverRating, setHoverRating] = useState({});
-  // 🔹 Load initial ratings if available from backend (optional)
+
+  // 🔹 Load initial ratings if available
   useEffect(() => {
     const ratings = {};
     order.shopOrders.forEach((shopOrder) => {
@@ -49,21 +50,17 @@ const UserOrderCard = ({ order }) => {
   // ⭐ Submit rating
   const handleRating = async (itemId, rating) => {
     try {
-      const res = await axios.post(
-        `${serverUrl}/api/item/rating`,
-        { itemId, rating },
-        { withCredentials: true }
-      );
-
-      // ✅ Update state so UI updates instantly
+      const res = await axios.post(`${serverUrl}/api/item/rating`, {
+        itemId,
+        rating,
+      },{withCredentials:true});
       setSelectedRating((prev) => ({ ...prev, [itemId]: rating }));
-
-      console.log("✅ Rating submitted:", res.data);
+      
     } catch (error) {
-      console.log("❌ Rating error:", error.response?.data || error.message);
+      console.log(error)
     }
+    
   };
-
   return (
     <div className="bg-white rounded-2xl p-6 shadow-md space-y-6 border border-gray-200 hover:shadow-lg transition">
       {/* Header */}
@@ -134,23 +131,27 @@ const UserOrderCard = ({ order }) => {
                 {/* ⭐ Rating (only if delivered) */}
                 {shopOrder.status === "delivered" && (
                   <div className="flex space-x-1 mt-2">
-                    {[1, 2, 3, 4, 5].map((star, idx) => (
-                      <button key={idx} onClick={() => handleRating(item.item._id, star)}>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => handleRating(item.item._id, star)} // ✅ click button pe
+                        onMouseEnter={() =>
+                          setHoverRating((prev) => ({
+                            ...prev,
+                            [item.item._id]: star,
+                          }))
+                        }
+                        onMouseLeave={() =>
+                          setHoverRating((prev) => ({
+                            ...prev,
+                            [item.item._id]: selectedRating[item.item._id] || 0,
+                          }))
+                        }
+                      >
                         <FaStar
                           size={20}
-                          onMouseEnter={() =>
-                            setHoverRating((prev) => ({
-                              ...prev,
-                              [item.item._id]: star,
-                            }))
-                          }
-                          onMouseLeave={() =>
-                            setHoverRating((prev) => ({
-                              ...prev,
-                              [item.item._id]: 0,
-                            }))
-                          }
-                          className={`transition-colors duration-150 ${
+                          className={`cursor-pointer transition-colors duration-150 ${
                             star <=
                             (hoverRating[item.item._id] ||
                               selectedRating[item.item._id] ||
