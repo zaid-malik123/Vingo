@@ -9,21 +9,22 @@ import { auth } from "../../firebase";
 import { ClipLoader } from "react-spinners";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../redux/userSlice";
+import { toast } from "react-toastify";
+
 const Login = () => {
   const primaryColor = "#ff4d2d";
-  const hoverColor = "#e64323";
   const bgColor = "#fff9f6";
   const borderColor = "#ddd";
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const [showPass, setShowPass] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // ✅ Error states
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
@@ -32,18 +33,16 @@ const Login = () => {
     setLoading(true);
     let hasError = false;
 
-    // Email validation
     if (!email) {
       setEmailError("Email is required");
       hasError = true;
     } else if (!validateEmail(email)) {
-      setEmailError("Please enter a valid email");
+      setEmailError("Enter a valid email");
       hasError = true;
     } else {
       setEmailError("");
     }
 
-    // Password validation
     if (!password) {
       setPasswordError("Password is required");
       hasError = true;
@@ -56,9 +55,10 @@ const Login = () => {
 
     if (hasError) {
       setLoading(false);
+      toast.info("Please check your input fields");
+      return;
     }
 
-    // API call
     try {
       const res = await axios.post(
         `${serverUrl}/api/auth/login`,
@@ -66,30 +66,30 @@ const Login = () => {
         { withCredentials: true }
       );
       dispatch(setUserData(res.data.user));
-      setLoading(false);
+      toast.success("Logged in successfully");
       navigate("/home");
     } catch (error) {
-      setLoading(false);
       const msg = error.response?.data?.message || "Login failed";
-      setServerError(msg);
+      toast.error(msg);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleGoogleAuth = async () => {
     const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
     try {
+      const result = await signInWithPopup(auth, provider);
       const { data } = await axios.post(
         `${serverUrl}/api/auth/google-auth`,
-        {
-          email: result.user.email,
-        },
+        { email: result.user.email },
         { withCredentials: true }
       );
       dispatch(setUserData(data.user));
+      toast.success("Google sign-in successful");
       navigate("/");
     } catch (error) {
-      console.log(error);
+      toast.error("Google sign-in failed");
     }
   };
 
@@ -106,7 +106,7 @@ const Login = () => {
           Vingo
         </h1>
         <p className="text-gray-600 mb-8">
-          Login your account to get started with delicious food deliveries
+          Log in to continue enjoying your favorite meals
         </p>
 
         {/* Email */}
@@ -161,13 +161,6 @@ const Login = () => {
         >
           Forgot Password?
         </p>
-
-        {/* Server Error */}
-        {serverError && (
-          <p className="text-red-500 text-center font-medium mb-3">
-            {serverError}
-          </p>
-        )}
 
         {/* Login Button */}
         <button

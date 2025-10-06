@@ -15,6 +15,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { toast } from "react-toastify";
 
 const DeliveryBoy = () => {
   const { user, socket } = useSelector((state) => state.userSlice);
@@ -128,6 +129,7 @@ const DeliveryBoy = () => {
       );
 
       if (res.data.message === "Order Delivered Successfully") {
+        toast.success("Order Delivered Successfully")
         location.reload();
       }
     } catch (error) {

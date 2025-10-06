@@ -9,6 +9,7 @@ import { auth } from "../../firebase";
 import { ClipLoader } from "react-spinners";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../redux/userSlice";
+import { toast } from "react-toastify";
 
 const Signup = () => {
   const primaryColor = "#ff4d2d";
@@ -108,7 +109,7 @@ const Signup = () => {
   const handleGoogleAuth = async () => {
     try {
       if (!mobileNo) {
-        return alert("mobile no is required");
+        return toast.warning("Mobile number is required");
       }
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
@@ -124,8 +125,10 @@ const Signup = () => {
           { withCredentials: true }
         );
         dispatch(setUserData(data.user));
+        toast.success("Account created successfully!");
         navigate("/");
       } catch (error) {
+        toast.error(msg || "Signup failed");
         console.log(error);
       }
     } catch (error) {
