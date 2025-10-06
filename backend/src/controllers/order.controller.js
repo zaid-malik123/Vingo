@@ -6,7 +6,7 @@ import { sendDeliveryOtpInUser } from "../service/otp.service.js";
 
 import Razorpay from "razorpay";
 import dotenv from "dotenv";
-import orders from "razorpay/dist/types/orders.js";
+
 dotenv.config();
 var instance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,

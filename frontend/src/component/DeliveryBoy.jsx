@@ -6,6 +6,15 @@ import { useEffect, useState } from "react";
 import { FaStore, FaMapMarkerAlt, FaBox } from "react-icons/fa";
 import { ClipLoader } from "react-spinners";
 import DeliveryBoyMapping from "./DeliveryBoyMapping";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 const DeliveryBoy = () => {
   const { user, socket } = useSelector((state) => state.userSlice);
@@ -14,6 +23,8 @@ const DeliveryBoy = () => {
   const [showBox, setShowBox] = useState(false);
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
+  const [todayDeliveries, setTodayDeliveries] = useState([]);
+  const [totalEarning, setTotalEarning] = useState(0);
 
   useEffect(() => {
     if (!socket || user.role != "deliveryBoy") return;
@@ -25,19 +36,18 @@ const DeliveryBoy = () => {
         socket.emit("updateLocation", {
           latitude,
           longitude,
-          userId: user._id
-        })
+          userId: user._id,
+        });
       });
-      (error)=>{
-        console.log(error)
+      (error) => {
+        console.log(error);
       },
-      {
-        enableHighAccuracy: true,
-
-      }
-      return ()=>{
-        if(watchId) navigator.geolocation.clearWatch(watchId)
-      }
+        {
+          enableHighAccuracy: true,
+        };
+      return () => {
+        if (watchId) navigator.geolocation.clearWatch(watchId);
+      };
     }
   }, [socket, user]);
 
@@ -115,6 +125,27 @@ const DeliveryBoy = () => {
     }
   };
 
+  const handleTodayDeliveries = async () => {
+    try {
+      const res = await axios.get(
+        `${serverUrl}/api/order/get-today-deliveries`,
+        { withCredentials: true }
+      );
+      setTodayDeliveries(res.data);
+      const totalDeliveries = res.data.reduce(
+        (sum, item) => sum + item.count,
+        0
+      );
+      setTotalEarning(totalDeliveries * 50);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    handleTodayDeliveries();
+  }, []);
+
   useEffect(() => {
     handleGetAssignment();
     handleGetCurrentOrder();
@@ -150,6 +181,50 @@ const DeliveryBoy = () => {
             </span>
           </p>
         </div>
+
+        {/* Today Deliveries Chart */}
+        {todayDeliveries.length > 0 && (
+          <div className="bg-white rounded-2xl p-6 shadow-md w-full border border-orange-100 mt-6">
+            <h2 className="text-xl font-bold mb-4 text-[#ff4d2d] flex items-center gap-2">
+              <FaBox /> Today's Deliveries
+            </h2>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={todayDeliveries}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="hour"
+                  label={{
+                    value: "Hour",
+                    position: "insideBottomRight",
+                    offset: 0,
+                  }}
+                />
+                <YAxis
+                  allowDecimals={false}
+                  label={{
+                    value: "Deliveries",
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
+                />
+                <Tooltip />
+                <Bar dataKey="count" fill="#ff4d2d" radius={[5, 5, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+            <div className="max-w-sm mx-auto mt-6 p-6 bg-orange-50 border border-orange-100 rounded-2xl shadow-md text-center">
+              <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                Today's Earnings
+              </h3>
+              <p className="text-3xl font-bold text-[#ff4d2d]">
+                ₹{totalEarning}
+              </p>
+              <p className="text-sm text-gray-500 mt-1">
+                {todayDeliveries.reduce((sum, item) => sum + item.count, 0)}{" "}
+                Deliveries Completed
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Available Orders */}
         {currentOrder == null && (
